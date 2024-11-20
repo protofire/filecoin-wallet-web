@@ -56,7 +56,7 @@ const StakingConfirmationTxDeposit = ({ order }: StakingOrderConfirmationViewPro
         title={
           <>
             Fee
-            <InfoTooltip title="The widget fee incurred here is charged by Kiln for the operation of this widget. The fee is calculated automatically. Part of the fee will contribute to a license fee that supports the Safe Community. Neither the Safe Ecosystem Foundation nor Safe{Wallet} operates the Kiln Widget and/or Kiln." />
+            <InfoTooltip title="The widget fee incurred here is charged by Kiln for the operation of this widget. The fee is calculated automatically. Part of the fee will contribute to a license fee that supports the Safe Community. Neither the Safe Ecosystem Foundation nor Filecoin Safe operates the Kiln Widget and/or Kiln." />
           </>
         }
       >
