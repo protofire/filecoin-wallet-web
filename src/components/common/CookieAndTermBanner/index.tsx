@@ -47,7 +47,7 @@ export const CookieAndTermBanner = ({
   const dispatch = useAppDispatch()
   const cookies = useAppSelector(selectCookies)
 
-  const { register, watch, getValues, setValue } = useForm({
+  const { getValues, setValue } = useForm({
     defaultValues: {
       [CookieAndTermType.TERMS]: true,
       [CookieAndTermType.NECESSARY]: true,
@@ -69,8 +69,8 @@ export const CookieAndTermBanner = ({
   }
 
   const handleAcceptAll = () => {
-    setValue(CookieAndTermType.UPDATES, true)
-    setValue(CookieAndTermType.ANALYTICS, true)
+    setValue(CookieAndTermType.UPDATES, false)
+    setValue(CookieAndTermType.ANALYTICS, false)
     setTimeout(handleAccept, 300)
   }
 
@@ -89,7 +89,7 @@ export const CookieAndTermBanner = ({
               By browsing this page, you accept our{' '}
               <ExternalLink href={AppRoutes.terms}>Terms & Conditions</ExternalLink> (last updated{' '}
               {metadata.last_update_date}) and the use of necessary cookies. By clicking &quot;Accept all&quot; you
-              additionally agree to the use of Beamer and Analytics cookies as listed below.{' '}
+              additionally agree to the use of cookies as listed below.{' '}
               <ExternalLink href={AppRoutes.cookie}>Cookie policy</ExternalLink>
             </Typography>
 
@@ -101,7 +101,7 @@ export const CookieAndTermBanner = ({
                   <Typography variant="body2">Locally stored data for core functionality</Typography>
                 </Box>
 
-                <Box mb={2}>
+                {/* <Box mb={2}>
                   <CookieCheckbox
                     checkboxProps={{ ...register(CookieAndTermType.UPDATES), id: 'beamer' }}
                     label="Beamer"
@@ -121,7 +121,7 @@ export const CookieAndTermBanner = ({
                   <Typography variant="body2">
                     Opt in for Google Analytics cookies to help us analyze app usage patterns.
                   </Typography>
-                </Box>
+                </Box> */}
               </Grid>
             </Grid>
 

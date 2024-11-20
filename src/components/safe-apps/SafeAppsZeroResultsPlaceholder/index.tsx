@@ -9,7 +9,7 @@ const SafeAppsZeroResultsPlaceholder = ({ searchQuery }: { searchQuery: string }
       text={
         <Typography variant="body1" color="primary.light" m={2} maxWidth="600px">
           No Safe Apps found matching <strong>{searchQuery}</strong>. Connect to dApps that haven&apos;t yet been
-          integrated with the {'Safe{Wallet}'} using WalletConnect.
+          integrated with the Filecoin Safe using WalletConnect.
         </Typography>
       }
     />

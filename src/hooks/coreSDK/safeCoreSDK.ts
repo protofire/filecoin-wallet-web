@@ -59,7 +59,7 @@ export const initSafeSDK = async ({
   if (providerNetwork !== BigInt(chainId)) return
 
   const safeVersion = version ?? (await Gnosis_safe__factory.connect(address, provider).VERSION())
-  let isL1SafeSingleton = chainId === chains.eth
+  let isL1SafeSingleton = [chains.eth, chains.filecoin, chains['filecoin-calibration']].includes(chainId)
 
   // If it is an official deployment we should still initiate the safeSDK
   if (!isValidMasterCopy(implementationVersionState)) {

@@ -1,6 +1,5 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import { IS_OFFICIAL_HOST } from '@/config/constants'
 import SafeTerms from '@/markdown/terms/terms.md'
 import type { LinkProps as NextLinkProps } from 'next/link'
 import NextLink from 'next/link'
@@ -30,10 +29,12 @@ const Terms: NextPage = () => {
   return (
     <>
       <Head>
-        <title>{'Safe{Wallet} – Terms'}</title>
+        <title>Filecoin Safe – Terms</title>
       </Head>
 
-      <main>{IS_OFFICIAL_HOST && <SafeTerms components={overrideComponents} />}</main>
+      <main>
+        <SafeTerms components={overrideComponents} />
+      </main>
     </>
   )
 }
