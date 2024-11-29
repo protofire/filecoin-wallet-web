@@ -54,7 +54,7 @@ export const ContractVersion = () => {
 
       {safeLoaded && safe.version && showUpdateDialog && (
         <Alert
-          sx={{ mt: 2, borderRadius: '2px', borderColor: '#B0FFC9' }}
+          sx={{ mt: 2, borderRadius: '2px', borderColor: '#39C1CB' }}
           icon={<SvgIcon component={InfoIcon} inheritViewBox color="secondary" />}
         >
           <AlertTitle sx={{ fontWeight: 700 }}>New version is available: {latestSafeVersion}</AlertTitle>

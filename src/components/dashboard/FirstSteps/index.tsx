@@ -101,8 +101,8 @@ const UsefulHintsWidget = () => {
           Did you know
         </Typography>
       }
-      title="Explore over 70+ dApps"
-      content="In our Safe App section you can connect your Safe to over 70 dApps directly or via Wallet Connect to interact with any application."
+      title="Explore dApps"
+      content="In our Safe App section you can connect your Safe to dApps directly or via Wallet Connect to interact with any application."
       completed={false}
     />
   )
@@ -340,7 +340,7 @@ const FirstSteps = () => {
                   gradientUnits="userSpaceOnUse"
                 >
                   <stop stopColor="#5FDDFF" />
-                  <stop offset="1" stopColor="#12FF80" />
+                  <stop offset="1" stopColor="#0090FF" />
                 </linearGradient>
               </defs>
             </svg>

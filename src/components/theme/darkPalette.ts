@@ -5,14 +5,14 @@ const darkPalette = {
     disabled: '#636669',
   },
   primary: {
-    dark: '#0cb259',
-    main: '#12FF80',
+    dark: '#085fa1',
+    main: '#0090FF',
     light: '#A1A3A7',
   },
   secondary: {
     dark: '#636669',
     main: '#FFFFFF',
-    light: '#B0FFC9',
+    light: '#39C1CB',
     background: '#1B2A22',
   },
   border: {
