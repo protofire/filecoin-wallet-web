@@ -6,9 +6,12 @@ import { useRouter } from 'next/router'
 import css from './styles.module.css'
 import { AppRoutes } from '@/config/routes'
 import packageJson from '../../../../package.json'
+// import AppstoreButton from '../AppStoreButton'
 import ExternalLink from '../ExternalLink'
 import MUILink from '@mui/material/Link'
 import { HELP_CENTER_URL, IS_OFFICIAL_HOST } from '@/config/constants'
+import ProtofireLogo from '@/public/images/protofire.svg'
+import darkPalette from '@/components/theme/darkPalette'
 
 const footerPages = [
   AppRoutes.welcome.index,
@@ -47,7 +50,7 @@ const Footer = (): ReactElement | null => {
         {IS_OFFICIAL_HOST ? (
           <>
             <li>
-              <Typography variant="caption">&copy;2022–{new Date().getFullYear()} Core Contributors GmbH</Typography>
+              <Typography variant="caption">&copy;2024–{new Date().getFullYear()} </Typography>
             </li>
             <li>
               <FooterLink href={getHref(AppRoutes.terms)}>Terms</FooterLink>
@@ -94,6 +97,20 @@ const Footer = (): ReactElement | null => {
           <ExternalLink href={`${packageJson.homepage}/releases/tag/v${packageJson.version}`} noIcon>
             <SvgIcon component={GitHubIcon} inheritViewBox fontSize="inherit" sx={{ mr: 0.5 }} /> v{packageJson.version}
           </ExternalLink>
+        </li>
+        <li>
+          <Typography variant="caption">
+            Supported by{' '}
+            <SvgIcon
+              component={ProtofireLogo}
+              inheritViewBox
+              fontSize="small"
+              sx={{ verticalAlign: 'middle', mx: 0.5 }}
+            />
+            <MUILink href="https://protofire.io" sx={{ color: darkPalette.primary.main, textDecoration: 'none' }}>
+              Protofire
+            </MUILink>
+          </Typography>
         </li>
         {/* <li>
           <AppstoreButton placement="footer" />
