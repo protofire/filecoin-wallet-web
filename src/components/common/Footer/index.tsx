@@ -90,6 +90,9 @@ const Footer = (): ReactElement | null => {
             <li>
               <FooterLink href={getHref(AppRoutes.settings.index)}>Preferences</FooterLink>
             </li>
+            <li>
+              <FooterLink href={HELP_CENTER_URL}>Help</FooterLink>
+            </li>
           </>
         )}
 
