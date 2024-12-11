@@ -143,11 +143,11 @@ function SetNameStep({
             By continuing, you agree to our{' '}
             <Link href={AppRoutes.terms} passHref legacyBehavior>
               <MUILink>terms of use</MUILink>
-            </Link>{' '}
-            and{' '}
+            </Link>
+            {/* and{' '}
             <Link href={AppRoutes.privacy} passHref legacyBehavior>
               <MUILink>privacy policy</MUILink>
-            </Link>
+            </Link> */}
             .
           </Typography>
 
