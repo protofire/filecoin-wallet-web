@@ -45,7 +45,14 @@
   width: auto;
   display: block;
   color: var(--color-logo-main);
+}
+
+.logo svg {
   height: 48px;
+}
+
+.logoMobile svg {
+  height: 40px;
 }
 
 .logo {
