@@ -9,7 +9,7 @@ import packageJson from '../../../../package.json'
 // import AppstoreButton from '../AppStoreButton'
 import ExternalLink from '../ExternalLink'
 import MUILink from '@mui/material/Link'
-import { HELP_CENTER_URL, IS_OFFICIAL_HOST } from '@/config/constants'
+import { FILECOIN_DOCS, HELP_CENTER_URL, IS_OFFICIAL_HOST } from '@/config/constants'
 import ProtofireLogo from '@/public/images/protofire.svg'
 import darkPalette from '@/components/theme/darkPalette'
 
@@ -89,6 +89,11 @@ const Footer = (): ReactElement | null => {
             </li>
             <li>
               <FooterLink href={getHref(AppRoutes.settings.index)}>Preferences</FooterLink>
+            </li>
+            <li>
+              <ExternalLink href={FILECOIN_DOCS} noIcon sx={{ span: { textDecoration: 'underline' } }}>
+                Docs
+              </ExternalLink>
             </li>
           </>
         )}
