@@ -1,13 +1,18 @@
 import ExternalLink from '@/components/common/ExternalLink'
+import { IS_OFFICIAL_HOST } from '@/config/constants'
 import useSafeInfo from '@/hooks/useSafeInfo'
 import useLocalStorage from '@/services/local-storage/useLocalStorage'
 import { Typography } from '@mui/material'
 import { useCallback, useEffect } from 'react'
 
 const SAMPLE_DAPPS = [
-  { name: 'Zerion', icon: '/images/common/nft-zerion.svg', url: 'https://app.zerion.io/connect-wallet' },
-  { name: 'Zapper', icon: '/images/common/nft-zapper.svg', url: 'https://zapper.xyz/' },
-  { name: 'OpenSea', icon: '/images/common/nft-opensea.svg', url: 'https://opensea.io/' },
+  ...(IS_OFFICIAL_HOST
+    ? [
+        { name: 'Zerion', icon: '/images/common/nft-zerion.svg', url: 'https://app.zerion.io/connect-wallet' },
+        { name: 'Zapper', icon: '/images/common/nft-zapper.svg', url: 'https://zapper.xyz/' },
+        { name: 'OpenSea', icon: '/images/common/nft-opensea.svg', url: 'https://opensea.io/' },
+      ]
+    : []),
 ]
 
 const LS_KEY = 'native_wc_dapps'
