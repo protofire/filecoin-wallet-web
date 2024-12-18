@@ -1,0 +1,108 @@
+diff --git a/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/compatibility_fallback_handler.json b/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/compatibility_fallback_handler.json
+index bd4341d..1f07e82 100644
+--- a/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/compatibility_fallback_handler.json
++++ b/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/compatibility_fallback_handler.json
+@@ -76,6 +76,7 @@
+         "288": "eip155",
+         "291": "canonical",
+         "300": "canonical",
++        "314": "eip155",
+         "321": "canonical",
+         "322": "canonical",
+         "324": "zksync",
+diff --git a/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/create_call.json b/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/create_call.json
+index 0675f78..6e253b0 100644
+--- a/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/create_call.json
++++ b/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/create_call.json
+@@ -76,6 +76,7 @@
+         "288": "eip155",
+         "291": "canonical",
+         "300": "canonical",
++        "314": "eip155",
+         "321": "canonical",
+         "322": "canonical",
+         "324": "zksync",
+diff --git a/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/gnosis_safe.json b/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/gnosis_safe.json
+index bfc9e27..9e292aa 100644
+--- a/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/gnosis_safe.json
++++ b/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/gnosis_safe.json
+@@ -76,6 +76,7 @@
+         "288": "eip155",
+         "291": "canonical",
+         "300": "canonical",
++        "314": "eip155",
+         "321": "canonical",
+         "322": "canonical",
+         "324": "zksync",
+diff --git a/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/gnosis_safe_l2.json b/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/gnosis_safe_l2.json
+index 01114ac..bd3cd22 100644
+--- a/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/gnosis_safe_l2.json
++++ b/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/gnosis_safe_l2.json
+@@ -76,6 +76,7 @@
+         "288": "eip155",
+         "291": "canonical",
+         "300": "canonical",
++        "314": "eip155",
+         "321": "canonical",
+         "322": "canonical",
+         "324": "zksync",
+diff --git a/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/multi_send.json b/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/multi_send.json
+index 58146b8..1196c52 100644
+--- a/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/multi_send.json
++++ b/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/multi_send.json
+@@ -76,6 +76,7 @@
+         "288": "eip155",
+         "291": "canonical",
+         "300": "canonical",
++        "314": "eip155",
+         "321": "canonical",
+         "322": "canonical",
+         "324": "zksync",
+diff --git a/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/multi_send_call_only.json b/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/multi_send_call_only.json
+index 104089b..a3ee182 100644
+--- a/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/multi_send_call_only.json
++++ b/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/multi_send_call_only.json
+@@ -76,6 +76,7 @@
+         "288": "eip155",
+         "291": "canonical",
+         "300": "canonical",
++        "314": "eip155",
+         "321": "canonical",
+         "322": "canonical",
+         "324": "zksync",
+diff --git a/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/proxy_factory.json b/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/proxy_factory.json
+index d46c162..2a6dda3 100644
+--- a/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/proxy_factory.json
++++ b/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/proxy_factory.json
+@@ -76,6 +76,7 @@
+         "288": "eip155",
+         "291": "canonical",
+         "300": "canonical",
++        "314": "eip155",
+         "321": "canonical",
+         "322": "canonical",
+         "324": "zksync",
+diff --git a/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/sign_message_lib.json b/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/sign_message_lib.json
+index 7278cc1..b968d47 100644
+--- a/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/sign_message_lib.json
++++ b/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/sign_message_lib.json
+@@ -76,6 +76,7 @@
+         "288": "eip155",
+         "291": "canonical",
+         "300": "canonical",
++        "314": "eip155",
+         "321": "canonical",
+         "322": "canonical",
+         "324": "zksync",
+diff --git a/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/simulate_tx_accessor.json b/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/simulate_tx_accessor.json
+index c272e70..fc9091d 100644
+--- a/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/simulate_tx_accessor.json
++++ b/node_modules/@safe-global/protocol-kit/node_modules/@safe-global/safe-deployments/dist/assets/v1.3.0/simulate_tx_accessor.json
+@@ -76,6 +76,7 @@
+         "288": "eip155",
+         "291": "canonical",
+         "300": "canonical",
++        "314": "eip155",
+         "321": "canonical",
+         "322": "canonical",
+         "324": "zksync",
