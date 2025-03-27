@@ -6,7 +6,7 @@ import useChainId from '@/hooks/useChainId'
 import ExternalLink from '@/components/common/ExternalLink'
 import useIntervalCounter from '@/hooks/useIntervalCounter'
 
-const STATUS_PAGE = 'https://status.safe.global'
+const STATUS_PAGE = 'https://status-app.safe.filecoin.io/'
 const MAX_SYNC_DELAY = 1000 * 60 * 5 // 5 minutes
 const POLL_INTERVAL = 1000 * 60 // 1 minute
 
