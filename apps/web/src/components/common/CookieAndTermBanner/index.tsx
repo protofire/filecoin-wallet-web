@@ -103,9 +103,7 @@ export const CookieAndTermBanner = ({
               }}
             >
               By browsing this page, you accept our{' '}
-              <ExternalLink href={AppRoutes.terms}>Terms & Conditions</ExternalLink> (last updated{' '}
-              {metadata.lastUpdated}) and the use of necessary cookies. By clicking &quot;Accept all&quot; you
-              additionally agree to the use of Beamer and Analytics cookies as listed below.{' '}
+              <ExternalLink href={AppRoutes.terms}>Terms & Conditions</ExternalLink> and the use of necessary cookies.{' '}
               <ExternalLink href={AppRoutes.cookie}>Cookie policy</ExternalLink>
             </Typography>
 

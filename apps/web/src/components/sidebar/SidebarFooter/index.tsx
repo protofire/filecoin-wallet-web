@@ -15,7 +15,7 @@ import BeamerIcon from '@/public/images/sidebar/whats-new.svg'
 import HelpCenterIcon from '@/public/images/sidebar/help-center.svg'
 import { Box, Link, ListItem, SvgIcon, useTheme } from '@mui/material'
 import DebugToggle from '../DebugToggle'
-import { HELP_CENTER_URL, IS_OFFICIAL_HOST, IS_PRODUCTION, NEW_SUGGESTION_FORM } from '@/config/constants'
+import { IS_OFFICIAL_HOST, IS_PRODUCTION, NEW_SUGGESTION_FORM, SUPPORT_FORM } from '@/config/constants'
 import Track from '@/components/common/Track'
 import { OVERVIEW_EVENTS } from '@/services/analytics/events/overview'
 import { useCurrentChain } from '@/hooks/useChains'
@@ -66,7 +66,7 @@ const SidebarFooter = (): ReactElement => {
       )}
       <Track {...OVERVIEW_EVENTS.HELP_CENTER}>
         <ListItem data-testid="need-help-btn" disablePadding>
-          <a target="_blank" rel="noopener noreferrer" href={HELP_CENTER_URL} style={{ width: '100%' }}>
+          <a target="_blank" rel="noopener noreferrer" href={SUPPORT_FORM} style={{ width: '100%' }}>
             <SidebarListItemButton>
               <SidebarListItemIcon color="primary">
                 <HelpCenterIcon />

@@ -1,6 +1,6 @@
 import { Typography, Link } from '@mui/material'
 
-import { HELP_CENTER_URL, IS_PRODUCTION } from '@/config/constants'
+import { IS_PRODUCTION, SUPPORT_FORM } from '@/config/constants'
 import { AppRoutes } from '@/config/routes'
 import WarningIcon from '@/public/images/notifications/warning.svg'
 
@@ -36,7 +36,7 @@ const ErrorBoundary = ({ error, componentStack }: ErrorBoundaryProps) => {
             }}
           >
             In case the problem persists, please reach out to us via our{' '}
-            <ExternalLink href={HELP_CENTER_URL}>Help Center</ExternalLink>
+            <ExternalLink href={SUPPORT_FORM}>Help Center</ExternalLink>
           </Typography>
         ) : (
           <>
