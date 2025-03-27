@@ -18,6 +18,7 @@ import { selectCookieBanner, openCookieBanner, closeCookieBanner } from '@/store
 import css from './styles.module.css'
 import { AppRoutes } from '@/config/routes'
 import ExternalLink from '../ExternalLink'
+import { useIsOfficialHost } from '@/hooks/useIsOfficialHost'
 
 const COOKIE_AND_TERM_WARNING: Record<CookieAndTermType, string> = {
   [CookieAndTermType.TERMS]: '',
@@ -46,8 +47,9 @@ export const CookieAndTermBanner = ({
   const warning = warningKey ? COOKIE_AND_TERM_WARNING[warningKey] : undefined
   const dispatch = useAppDispatch()
   const cookies = useAppSelector(selectCookies)
+  const isOfficialHost = useIsOfficialHost()
 
-  const { getValues, setValue } = useForm({
+  const { register, watch, getValues, setValue } = useForm({
     defaultValues: {
       [CookieAndTermType.TERMS]: true,
       [CookieAndTermType.NECESSARY]: true,
@@ -75,7 +77,7 @@ export const CookieAndTermBanner = ({
   }
 
   return (
-    <Paper data-testid="cookies-popup" className={classnames(css.container, { [css.inverted]: inverted })}>
+    <Paper className={classnames(css.container, { [css.inverted]: inverted })}>
       {warning && (
         <Typography
           align="center"
@@ -124,28 +126,35 @@ export const CookieAndTermBanner = ({
                   <br />
                   <Typography variant="body2">Locally stored data for core functionality</Typography>
                 </Box>
+                {isOfficialHost && (
+                  <>
+                    <Box
+                      sx={{
+                        mb: 2,
+                      }}
+                    >
+                      <CookieCheckbox
+                        checkboxProps={{ ...register(CookieAndTermType.UPDATES), id: 'beamer' }}
+                        label="Beamer"
+                        checked={watch(CookieAndTermType.UPDATES)}
+                      />
+                      <br />
+                      <Typography variant="body2">New features and product announcements</Typography>
+                    </Box>
 
-                {/* <Box mb={2}>
-                  <CookieCheckbox
-                    checkboxProps={{ ...register(CookieAndTermType.UPDATES), id: 'beamer' }}
-                    label="Beamer"
-                    checked={watch(CookieAndTermType.UPDATES)}
-                  />
-                  <br />
-                  <Typography variant="body2">New features and product announcements</Typography>
-                </Box>
-
-                <Box>
-                  <CookieCheckbox
-                    checkboxProps={{ ...register(CookieAndTermType.ANALYTICS), id: 'ga' }}
-                    label="Analytics"
-                    checked={watch(CookieAndTermType.ANALYTICS)}
-                  />
-                  <br />
-                  <Typography variant="body2">
-                    Opt in for Google Analytics cookies to help us analyze app usage patterns.
-                  </Typography>
-                </Box> */}
+                    <Box>
+                      <CookieCheckbox
+                        checkboxProps={{ ...register(CookieAndTermType.ANALYTICS), id: 'ga' }}
+                        label="Analytics"
+                        checked={watch(CookieAndTermType.ANALYTICS)}
+                      />
+                      <br />
+                      <Typography variant="body2">
+                        Opt in for Google Analytics cookies to help us analyze app usage patterns.
+                      </Typography>
+                    </Box>
+                  </>
+                )}
               </Grid>
             </Grid>
 
@@ -158,17 +167,19 @@ export const CookieAndTermBanner = ({
                 gap: 2,
               }}
             >
-              <Grid item>
-                <Typography>
-                  <Button onClick={handleAccept} variant="text" size="small" color="inherit" disableElevation>
-                    Save settings
-                  </Button>
-                </Typography>
-              </Grid>
+              {isOfficialHost && (
+                <Grid item>
+                  <Typography>
+                    <Button onClick={handleAccept} variant="text" size="small" color="inherit" disableElevation>
+                      Save settings
+                    </Button>
+                  </Typography>
+                </Grid>
+              )}
 
               <Grid item>
                 <Button onClick={handleAcceptAll} variant="contained" color="secondary" size="small" disableElevation>
-                  Accept all
+                  Accept {isOfficialHost && 'all'}
                 </Button>
               </Grid>
             </Grid>
