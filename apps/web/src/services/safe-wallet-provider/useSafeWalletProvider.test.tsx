@@ -1,5 +1,5 @@
 import { Provider } from 'react-redux'
-import type { ExtendedSafeInfo } from '@/store/safeInfoSlice'
+import type { ExtendedSafeInfo } from '@safe-global/store/slices/SafeInfo/types'
 import * as gateway from '@safe-global/safe-gateway-typescript-sdk'
 import * as router from 'next/router'
 
@@ -11,11 +11,11 @@ import useSafeWalletProvider, { useTxFlowApi } from './useSafeWalletProvider'
 import { SafeWalletProvider } from '.'
 import type { RootState } from '@/store'
 import { makeStore } from '@/store'
-import * as messages from '@/utils/safe-messages'
+import * as messages from '@safe-global/utils/utils/safe-messages'
 import { faker } from '@faker-js/faker'
 import { Interface } from 'ethers'
 import { getCreateCallDeployment } from '@safe-global/safe-deployments'
-import { useCurrentChain } from '@/hooks/useChains'
+import * as chainHooks from '@/hooks/useChains'
 import { chainBuilder } from '@/tests/builders/chains'
 
 const appInfo = {
@@ -33,21 +33,13 @@ jest.mock('./notifications', () => {
   }
 })
 
-jest.mock('@/hooks/useChains', () => ({
-  __esModule: true,
-  ...jest.requireActual('@/hooks/useChains'),
-  useCurrentChain: jest.fn(),
-}))
-
 describe('useSafeWalletProvider', () => {
-  const mockUseCurrentChain = useCurrentChain as jest.MockedFunction<typeof useCurrentChain>
-
   beforeEach(() => {
     jest.clearAllMocks()
 
-    mockUseCurrentChain.mockReturnValue(
-      chainBuilder().with({ chainId: '1', recommendedMasterCopyVersion: '1.4.1' }).build(),
-    )
+    jest.spyOn(chainHooks, 'useCurrentChain').mockImplementation(() => {
+      return chainBuilder().with({ chainId: '1', recommendedMasterCopyVersion: '1.4.1' }).build()
+    })
   })
 
   describe('useSafeWalletProvider', () => {

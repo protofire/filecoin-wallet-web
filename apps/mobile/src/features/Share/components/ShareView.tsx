@@ -24,7 +24,6 @@ type ShareViewProps = {
 export const ShareView = ({ activeSafe, availableChains }: ShareViewProps) => {
   const copyAndDispatchToast = useCopyAndDispatchToast()
   const contact = useAppSelector(selectContactByAddress(activeSafe.address))
-
   const safeAddress = activeSafe.address
 
   const onPressShare = async () => {
@@ -43,7 +42,7 @@ export const ShareView = ({ activeSafe, availableChains }: ShareViewProps) => {
 
   return (
     <>
-      <YStack flex={1}>
+      <YStack flex={1} paddingBottom={'$4'}>
         <YStack flex={1} justifyContent={'flex-end'} alignItems={'center'} marginBottom={'$6'}>
           <H3 fontWeight={600}>{contact ? contact.name : 'Unnamed safe'}</H3>
         </YStack>
@@ -85,20 +84,10 @@ export const ShareView = ({ activeSafe, availableChains }: ShareViewProps) => {
             </View>
           </Container>
           <XStack gap={'$3'} marginTop={'$6'}>
-            <SafeButton
-              size={'$sm'}
-              onPress={onPressShare}
-              icon={<SafeFontIcon name={'export'} size={16} style={{ marginTop: -4 }} />}
-              secondary
-            >
+            <SafeButton size={'$sm'} onPress={onPressShare} icon={<SafeFontIcon name={'export'} size={16} />} secondary>
               Share
             </SafeButton>
-            <SafeButton
-              size={'$sm'}
-              onPress={onPressCopy}
-              icon={<SafeFontIcon name={'copy'} size={16} style={{ marginTop: -4 }} />}
-              secondary
-            >
+            <SafeButton size={'$sm'} onPress={onPressCopy} icon={<SafeFontIcon name={'copy'} size={16} />} secondary>
               Copy
             </SafeButton>
           </XStack>

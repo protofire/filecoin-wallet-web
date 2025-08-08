@@ -1,11 +1,11 @@
-import { defaultSecurityContextValues } from '@/components/tx/security/shared/TxSecurityContext'
+import { defaultSecurityContextValues } from '@safe-global/utils/components/tx/security/shared/utils'
 import { type ReactElement } from 'react'
 import * as hooks from '@/components/tx/SignOrExecuteForm/hooks'
 import * as useValidateTxData from '@/hooks/useValidateTxData'
 import { SignForm } from '@/components/tx/SignOrExecuteForm/SignForm'
 import { render } from '@/tests/test-utils'
 import { createMockSafeTransaction } from '@/tests/transactions'
-import { OperationType } from '@safe-global/safe-core-sdk-types'
+import { OperationType } from '@safe-global/types-kit'
 import { fireEvent, waitFor } from '@testing-library/react'
 
 // We assume that CheckWallet always returns true

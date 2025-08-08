@@ -29,9 +29,16 @@ import type {
   Transaction,
   CreationTransactionInfo,
   CustomTransactionInfo,
+  MultisigExecutionDetails,
+  NativeStakingDepositTransactionInfo,
+  NativeStakingValidatorsExitTransactionInfo,
+  NativeStakingWithdrawTransactionInfo,
+  VaultDepositTransactionInfo,
+  VaultRedeemTransactionInfo,
+  DataDecoded,
+  BridgeAndSwapTransactionInfo,
+  SwapTransactionInfo,
 } from '@safe-global/store/gateway/AUTO_GENERATED/transactions'
-
-import type { DetailedExecutionInfo, MultisigExecutionDetails } from '@safe-global/safe-gateway-typescript-sdk'
 
 import { HistoryTransactionItems, PendingTransactionItems } from '@safe-global/store/gateway/types'
 
@@ -51,7 +58,9 @@ export const isTxQueued = (value: Transaction['txStatus']): boolean => {
   )
 }
 
-export const isMultisigDetailedExecutionInfo = (value?: DetailedExecutionInfo): value is MultisigExecutionDetails => {
+export const isMultisigDetailedExecutionInfo = (
+  value?: TransactionDetails['detailedExecutionInfo'],
+): value is MultisigExecutionDetails => {
   return value?.type === DetailedExecutionInfoType.MULTISIG
 }
 
@@ -114,6 +123,10 @@ export const isMultiSendTxInfo = (value: Transaction['txInfo']): value is MultiS
   )
 }
 
+export const isMultiSendData = (value: DataDecoded) => {
+  return value.method === 'multiSend'
+}
+
 export const isSwapOrderTxInfo = (value: TransactionInfo): value is SwapOrderTransactionInfo => {
   return value.type === TransactionInfoType.SWAP_ORDER
 }
@@ -127,6 +140,22 @@ export const isOrderTxInfo = (value: Transaction['txInfo']): value is SwapOrderT
 
 export const isCancellationTxInfo = (value: Transaction['txInfo']): value is Cancellation => {
   return isCustomTxInfo(value) && value.isCancellation
+}
+
+export const isStakingTxDepositInfo = (value: Transaction['txInfo']): value is NativeStakingDepositTransactionInfo => {
+  return value.type === TransactionInfoType.NATIVE_STAKING_DEPOSIT
+}
+
+export const isStakingTxExitInfo = (
+  value: Transaction['txInfo'],
+): value is NativeStakingValidatorsExitTransactionInfo => {
+  return value.type === TransactionInfoType.NATIVE_STAKING_VALIDATORS_EXIT
+}
+
+export const isStakingTxWithdrawInfo = (
+  value: Transaction['txInfo'],
+): value is NativeStakingWithdrawTransactionInfo => {
+  return value.type === TransactionInfoType.NATIVE_STAKING_WITHDRAW
 }
 
 export const isTransactionListItem = (
@@ -175,4 +204,26 @@ export const isERC20Transfer = (value: TransferTransactionInfo['transferInfo']):
 
 export const isERC721Transfer = (value: TransferTransactionInfo['transferInfo']): value is Erc721Transfer => {
   return value.type === TransactionTokenType.ERC721
+}
+
+export const isVaultDepositTxInfo = (value: TransactionDetails['txInfo']): value is VaultDepositTransactionInfo => {
+  return value.type === 'VaultDeposit'
+}
+
+export const isVaultRedeemTxInfo = (value: TransactionDetails['txInfo']): value is VaultRedeemTransactionInfo => {
+  return value.type === 'VaultRedeem'
+}
+
+export const isAnyEarnTxInfo = (
+  value: TransactionDetails['txInfo'],
+): value is VaultDepositTransactionInfo | VaultRedeemTransactionInfo => {
+  return isVaultDepositTxInfo(value) || isVaultRedeemTxInfo(value)
+}
+
+export const isBridgeOrderTxInfo = (value: Transaction['txInfo']): value is BridgeAndSwapTransactionInfo => {
+  return value.type === 'SwapAndBridge'
+}
+
+export const isLifiSwapTxInfo = (value: Transaction['txInfo']): value is SwapTransactionInfo => {
+  return value.type === 'Swap'
 }

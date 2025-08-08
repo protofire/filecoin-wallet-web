@@ -1,6 +1,8 @@
 import { AppRoutes } from '@/config/routes'
+import { useIsSpaceRoute } from '@/hooks/useIsSpaceRoute'
 import { usePathname } from 'next/navigation'
 import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
 
 const NO_SIDEBAR_ROUTES = [
   AppRoutes.share.safeApp,
@@ -9,6 +11,7 @@ const NO_SIDEBAR_ROUTES = [
   AppRoutes.index,
   AppRoutes.welcome.index,
   AppRoutes.welcome.accounts,
+  AppRoutes.welcome.spaces,
   AppRoutes.imprint,
   AppRoutes.privacy,
   AppRoutes.cookie,
@@ -24,11 +27,22 @@ const TOGGLE_SIDEBAR_ROUTES = [AppRoutes.apps.open]
  * @returns A tuple with the first value indicating if the sidebar should be displayed and the second value indicating if the sidebar can be toggled
  */
 export function useIsSidebarRoute(pathname?: string): [boolean, boolean] {
-  const clientPathname = usePathname()
-  const route = pathname || clientPathname || ''
-  const noSidebar = NO_SIDEBAR_ROUTES.includes(route)
-  const toggledSidebar = TOGGLE_SIDEBAR_ROUTES.includes(route)
   const router = useRouter()
-  const hasSafe = !router.isReady || !!router.query.safe
-  return [!noSidebar && hasSafe, toggledSidebar]
+  const clientPathname = usePathname()
+  const isSpaceRoute = useIsSpaceRoute()
+  const [hasSafe, setHasSafe] = useState(false)
+
+  const route = pathname || clientPathname || ''
+  const sidebarQuery = router.query.sidebar === 'true'
+  const noSidebar = NO_SIDEBAR_ROUTES.includes(route) && !sidebarQuery
+  const toggledSidebar = TOGGLE_SIDEBAR_ROUTES.includes(route) && !sidebarQuery
+
+  useEffect(() => {
+    if (!router.isReady) return
+    setHasSafe(!!router.query.safe)
+  }, [router.isReady, router.query.safe])
+
+  const displaySidebar = (!noSidebar && hasSafe) || isSpaceRoute
+
+  return [displaySidebar, toggledSidebar]
 }

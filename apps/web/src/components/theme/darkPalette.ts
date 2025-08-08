@@ -27,7 +27,7 @@ const darkPalette = {
     background: '#2F2527',
   },
   success: {
-    dark: '#028D4C',
+    dark: '#388E3C',
     main: '#00B460',
     light: '#81C784',
     background: '#1F2920',
@@ -49,6 +49,7 @@ const darkPalette = {
     main: '#121312',
     paper: '#1C1C1C',
     light: '#1B2A22',
+    lightGrey: '#303033',
   },
   backdrop: {
     main: '#636669',
@@ -59,6 +60,7 @@ const darkPalette = {
   },
   static: {
     main: '#121312',
+    light: '#636669',
   },
 }
 

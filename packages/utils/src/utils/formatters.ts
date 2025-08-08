@@ -1,6 +1,6 @@
 import type { BigNumberish } from 'ethers'
 import { formatUnits, parseUnits } from 'ethers'
-import { formatAmount, formatAmountPrecise } from './formatNumber'
+import { formatAmount, formatAmountPrecise } from '@safe-global/utils/utils/formatNumber'
 import { formatDuration, intervalToDuration } from 'date-fns'
 
 const GWEI = 'gwei'
@@ -16,7 +16,8 @@ export const _removeTrailingZeros = (value: string): string => {
  * @param decimals decimals of the specified value or unit name
  * @returns value at specified decimals, i.e. 0.000000000000000001
  */
-export const safeFormatUnits = (value: BigNumberish, decimals: number | string = GWEI): string => {
+export const safeFormatUnits = (value: BigNumberish, decimals?: number | string | null): string => {
+  decimals = decimals ?? GWEI
   try {
     const formattedAmount = formatUnits(value, decimals)
 
@@ -36,16 +37,16 @@ export const safeFormatUnits = (value: BigNumberish, decimals: number | string =
  */
 export const formatVisualAmount = (
   value: BigNumberish,
-  decimals: number | string = GWEI,
+  decimals?: number | string | null,
   precision?: number,
 ): string => {
-  const amount = safeFormatUnits(value, decimals)
+  const amount = safeFormatUnits(value, decimals ?? GWEI)
   return precision !== undefined ? formatAmountPrecise(amount, precision) : formatAmount(amount)
 }
 
-export const safeParseUnits = (value: string, decimals: number | string = GWEI): bigint | undefined => {
+export const safeParseUnits = (value: string, decimals?: number | string | null): bigint | undefined => {
   try {
-    return parseUnits(value, decimals)
+    return parseUnits(value, decimals ?? GWEI)
   } catch (err) {
     console.error('Error parsing units', err)
     return
@@ -60,7 +61,7 @@ export const shortenAddress = (address: string, length = 4): string => {
   return `${address.slice(0, length + 2)}...${address.slice(-length)}`
 }
 
-export const shortenText = (text: string, length = 10, separator = '...'): string => {
+export const shortenText = (text: string, length = 10, separator = '…'): string => {
   return `${text.slice(0, length)}${separator}`
 }
 
@@ -107,4 +108,15 @@ export const formatDurationFromMilliseconds = (
 export const maybePlural = (quantity: number | unknown[]) => {
   quantity = Array.isArray(quantity) ? quantity.length : quantity
   return quantity === 1 ? '' : 's'
+}
+
+export const formatPercentage = (value: number, hideFractions?: boolean) => {
+  const fraction = hideFractions ? 0 : 2
+
+  return new Intl.NumberFormat(undefined, {
+    style: 'percent',
+    maximumFractionDigits: fraction,
+    signDisplay: 'never',
+    minimumFractionDigits: fraction,
+  }).format(value)
 }

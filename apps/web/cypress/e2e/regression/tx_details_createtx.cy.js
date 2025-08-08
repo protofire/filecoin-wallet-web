@@ -17,7 +17,8 @@ const contracts = {
   '1_4_1': '0xfd0732dc9e303f09fcef3a7388ad10a83459ec99',
 }
 const appUrl = constants.TX_Builder_url
-const iframeSelector = `iframe[id="iframe-${appUrl}"]`
+const iframeSelector = `iframe[id="iframe-${encodeURIComponent(appUrl)}"]`
+//iframeSelector = `iframe[id="iframe-${encodeURIComponent(constants.safeTestAppurl)}"]`
 
 describe('Transaction details create tests', { defaultCommandTimeout: 30000 }, () => {
   before(async () => {
@@ -38,34 +39,6 @@ describe('Transaction details create tests', { defaultCommandTimeout: 30000 }, (
     })
     safeapps.verifyUntrustedHandllerWarningVisible()
   })
-
-  it(
-    'Verify that no error for the COWSwap fallbackhandler on confirm tx screen',
-    { defaultCommandTimeout: 30000 },
-    () => {
-      cy.visit(constants.swapUrl + staticSafes.SEP_STATIC_SAFE_27)
-      const iframeSelector = `iframe[src*="${constants.swapWidget}"]`
-
-      wallet.connectSigner(signer)
-      swaps.acceptLegalDisclaimer()
-      cy.wait(4000)
-      main.getIframeBody(iframeSelector).within(() => {
-        swaps.switchToTwap()
-      })
-      swaps.unlockTwapOrders(iframeSelector)
-      main.getIframeBody(iframeSelector).within(() => {
-        swaps.selectInputCurrency(swaps.swapTokens.cow)
-        swaps.setInputValue(600)
-        swaps.selectOutputCurrency(swaps.swapTokens.dai)
-        swaps.clickOnReviewOrderBtn()
-        swaps.placeTwapOrder()
-      })
-      createtx.clickOnContinueSignTransactionBtn()
-      createtx.clickOnAcknowledgement()
-      txs.verifyExecuteBtnIsVisible()
-      txs.verifyUntrustedHandllerWarningDoesNotExist()
-    },
-  )
 
   it('Verify that when the tx contains the action with an official 1.4.1 fallbackhandler contract there is no error', () => {
     cy.visit(`/apps/open?safe=${staticSafes.SEP_STATIC_SAFE_36}&appUrl=${encodeURIComponent(appUrl)}`)

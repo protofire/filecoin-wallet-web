@@ -1,22 +1,28 @@
 import { useContext, useEffect } from 'react'
 import type { ReactElement } from 'react'
-import type { SafeTransaction } from '@safe-global/safe-core-sdk-types'
+import type { SafeTransaction } from '@safe-global/types-kit'
 import type { SafeAppsTxParams } from '.'
 import { createMultiSendCallOnlyTx, createTx } from '@/services/tx/tx-sender'
 import useHighlightHiddenTab from '@/hooks/useHighlightHiddenTab'
 import { SafeTxContext } from '@/components/tx-flow/SafeTxProvider'
 import { isTxValid } from '@/components/safe-apps/utils'
 import ErrorMessage from '@/components/tx/ErrorMessage'
-import ReviewTransaction from '@/components/tx/ReviewTransaction'
+import ReviewTransaction from '@/components/tx/ReviewTransactionV2'
+import { type ReviewTransactionContentProps } from '@/components/tx/ReviewTransactionV2/ReviewTransactionContent'
+import { getTxOrigin } from '@/utils/transactions'
 
 type ReviewSafeAppsTxProps = {
   safeAppsTx: SafeAppsTxParams
   onSubmit: () => void
-  origin?: string
-}
+} & ReviewTransactionContentProps
 
-const ReviewSafeAppsTx = ({ safeAppsTx: { txs, params }, onSubmit, origin }: ReviewSafeAppsTxProps): ReactElement => {
-  const { setSafeTx, safeTxError, setSafeTxError } = useContext(SafeTxContext)
+const ReviewSafeAppsTx = ({
+  safeAppsTx: { txs, params, app },
+  onSubmit,
+  children,
+  ...props
+}: ReviewSafeAppsTxProps): ReactElement => {
+  const { setSafeTx, safeTxError, setSafeTxError, setTxOrigin } = useContext(SafeTxContext)
 
   useHighlightHiddenTab()
 
@@ -34,19 +40,25 @@ const ReviewSafeAppsTx = ({ safeAppsTx: { txs, params }, onSubmit, origin }: Rev
       return tx
     }
 
-    createSafeTx().then(setSafeTx).catch(setSafeTxError)
-  }, [txs, setSafeTx, setSafeTxError, params])
+    createSafeTx()
+      .then((tx) => {
+        setSafeTx(tx)
+        setTxOrigin(getTxOrigin(app))
+      })
+      .catch(setSafeTxError)
+  }, [txs, setSafeTx, setSafeTxError, setTxOrigin, app, params])
 
   const error = !isTxValid(txs)
 
   return (
-    <ReviewTransaction onSubmit={onSubmit} origin={origin} showMethodCall>
+    <ReviewTransaction onSubmit={onSubmit} {...props}>
       {error ? (
         <ErrorMessage error={safeTxError}>
           This Safe App initiated a transaction which cannot be processed. Please get in touch with the developer of
           this Safe App for more information.
         </ErrorMessage>
       ) : null}
+      {children}
     </ReviewTransaction>
   )
 }

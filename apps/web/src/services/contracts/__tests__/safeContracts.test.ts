@@ -1,10 +1,10 @@
 import { ImplementationVersionState } from '@safe-global/safe-gateway-typescript-sdk'
+import { _getMinimumMultiSendCallOnlyVersion } from '../safeContracts'
 import {
-  _getValidatedGetContractProps,
   isValidMasterCopy,
-  _getMinimumMultiSendCallOnlyVersion,
+  _getValidatedGetContractProps,
   isMigrationToL2Possible,
-} from '../safeContracts'
+} from '@safe-global/utils/services/contracts/safeContracts'
 import { safeInfoBuilder } from '@/tests/builders/safe'
 
 describe('safeContracts', () => {

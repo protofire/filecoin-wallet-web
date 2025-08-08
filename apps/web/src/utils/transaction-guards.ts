@@ -1,5 +1,4 @@
 import type {
-  AddressEx,
   BaselineConfirmationView,
   Cancellation,
   ConflictHeader,
@@ -42,6 +41,7 @@ import type {
   StakingTxInfo,
   TransactionData,
 } from '@safe-global/safe-gateway-typescript-sdk'
+import { type AddressInfo } from '@safe-global/store/gateway/AUTO_GENERATED/safes'
 import {
   ConfirmationViewTypes,
   ConflictType,
@@ -54,7 +54,7 @@ import {
   TransferDirection,
 } from '@safe-global/safe-gateway-typescript-sdk'
 import { getDeployedSpendingLimitModuleAddress } from '@/services/contracts/spendingLimitContracts'
-import { sameAddress } from '@/utils/addresses'
+import { sameAddress } from '@safe-global/utils/utils/addresses'
 import type { NamedAddress } from '@/components/new-safe/create/types'
 import type { RecoveryQueueItem } from '@/features/recovery/services/recovery-state'
 import { ethers } from 'ethers'
@@ -62,13 +62,25 @@ import {
   getSafeToL2MigrationDeployment,
   getSafeMigrationDeployment,
   getMultiSendDeployments,
+  getSignMessageLibDeployments,
 } from '@safe-global/safe-deployments'
-import { Safe__factory, Safe_to_l2_migration__factory } from '@/types/contracts'
-import { hasMatchingDeployment } from '@/services/contracts/deployments'
+import {
+  Safe__factory,
+  Safe_to_l2_migration__factory,
+  Sign_message_lib__factory,
+} from '@safe-global/utils/types/contracts'
+import { hasMatchingDeployment } from '@safe-global/utils/services/contracts/deployments'
 import { isMultiSendCalldata } from './transaction-calldata'
 import { decodeMultiSendData } from '@safe-global/protocol-kit/dist/src/utils'
-import { OperationType } from '@safe-global/safe-core-sdk-types'
-import { LATEST_SAFE_VERSION } from '@/config/constants'
+import { OperationType } from '@safe-global/types-kit'
+import { LATEST_SAFE_VERSION } from '@safe-global/utils/config/constants'
+import type {
+  BridgeAndSwapTransactionInfo,
+  SwapTransactionInfo,
+  TransactionDetails,
+  VaultDepositTransactionInfo,
+  VaultRedeemTransactionInfo,
+} from '@safe-global/store/gateway/AUTO_GENERATED/transactions'
 
 export const isTxQueued = (value: TransactionStatus): boolean => {
   return [TransactionStatus.AWAITING_CONFIRMATIONS, TransactionStatus.AWAITING_EXECUTION].includes(value)
@@ -77,11 +89,11 @@ export const isTxQueued = (value: TransactionStatus): boolean => {
 export const isAwaitingExecution = (txStatus: TransactionStatus): boolean =>
   TransactionStatus.AWAITING_EXECUTION === txStatus
 
-const isAddressEx = (owners: AddressEx[] | NamedAddress[]): owners is AddressEx[] => {
-  return (owners as AddressEx[]).every((owner) => owner.value !== undefined)
+const isAddressEx = (owners: AddressInfo[] | NamedAddress[]): owners is AddressInfo[] => {
+  return (owners as AddressInfo[]).every((owner) => owner.value !== undefined)
 }
 
-export const isOwner = (safeOwners: AddressEx[] | NamedAddress[] = [], walletAddress?: string) => {
+export const isOwner = (safeOwners: AddressInfo[] | NamedAddress[] = [], walletAddress?: string) => {
   if (isAddressEx(safeOwners)) {
     return safeOwners.some((owner) => sameAddress(owner.value, walletAddress))
   }
@@ -185,6 +197,14 @@ export const isMigrateToL2TxInfo = (value: TransactionInfo): value is Custom => 
 
 export const isSwapOrderTxInfo = (value: TransactionInfo): value is SwapOrder => {
   return value.type === TransactionInfoType.SWAP_ORDER
+}
+
+export const isBridgeOrderTxInfo = (value: any): value is BridgeAndSwapTransactionInfo => {
+  return (value.type as string) === 'SwapAndBridge'
+}
+
+export const isLifiSwapTxInfo = (value: any): value is SwapTransactionInfo => {
+  return (value.type as string) === 'Swap'
 }
 
 export const isTwapOrderTxInfo = (value: TransactionInfo): value is TwapOrder => {
@@ -352,7 +372,11 @@ export const isConfirmableBy = (txSummary: TransactionSummary, walletAddress: st
   )
 }
 
-export const isExecutable = (txSummary: TransactionSummary, walletAddress: string, safe: SafeInfo): boolean => {
+export const isExecutable = (
+  txSummary: TransactionSummary,
+  walletAddress: string,
+  safe: Pick<SafeInfo, 'nonce'>,
+): boolean => {
   if (
     !txSummary.executionInfo ||
     !isMultisigExecutionInfo(txSummary.executionInfo) ||
@@ -419,6 +443,7 @@ export const isERC721Transfer = (value: TransferInfo): value is Erc721Transfer =
 }
 
 const safeInterface = Safe__factory.createInterface()
+const signMessageInterface = Sign_message_lib__factory.createInterface()
 /**
  * True if the tx calls `approveHash`
  */
@@ -432,6 +457,16 @@ export const isOnChainConfirmationTxInfo = (info: TransactionInfo): info is Cust
     return info.methodName === 'approveHash' && info.dataSize === '36'
   }
   return false
+}
+
+export const isOnChainSignMessageTxData = (data: TransactionData | undefined, chainId: string): boolean => {
+  const signMessageSelector = signMessageInterface.getFunction('signMessage').selector
+  const toAddress = data?.to.value
+  const isDelegateCall = data?.operation === Operation.DELEGATE
+  const isSignMessageLib =
+    toAddress !== undefined &&
+    hasMatchingDeployment(getSignMessageLibDeployments, toAddress, chainId, ['1.3.0', '1.4.1'])
+  return Boolean(data && data.hexData?.startsWith(signMessageSelector) && isSignMessageLib && isDelegateCall)
 }
 
 /**
@@ -483,4 +518,18 @@ export const isSafeMigrationTxData = (data?: TransactionData): boolean => {
     to: data.to.value,
     operation: data.operation as number,
   })
+}
+
+export const isVaultDepositTxInfo = (value: TransactionDetails['txInfo']): value is VaultDepositTransactionInfo => {
+  return value.type === 'VaultDeposit'
+}
+
+export const isVaultRedeemTxInfo = (value: TransactionDetails['txInfo']): value is VaultRedeemTransactionInfo => {
+  return value.type === 'VaultRedeem'
+}
+
+export const isAnyEarnTxInfo = (
+  value: TransactionDetails['txInfo'],
+): value is VaultDepositTransactionInfo | VaultRedeemTransactionInfo => {
+  return isVaultDepositTxInfo(value) || isVaultRedeemTxInfo(value)
 }

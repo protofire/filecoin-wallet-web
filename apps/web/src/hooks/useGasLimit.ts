@@ -2,8 +2,8 @@ import { SafeProvider } from '@safe-global/protocol-kit'
 import { useEffect } from 'react'
 import type Safe from '@safe-global/protocol-kit'
 import { encodeSignatures } from '@/services/tx/encodeSignatures'
-import type { SafeTransaction } from '@safe-global/safe-core-sdk-types'
-import useAsync from '@/hooks/useAsync'
+import type { SafeTransaction } from '@safe-global/types-kit'
+import useAsync from '@safe-global/utils/hooks/useAsync'
 import useChainId from '@/hooks/useChainId'
 import { useWeb3ReadOnly } from '@/hooks/wallets/web3'
 import chains from '@/config/chains'
@@ -18,7 +18,7 @@ import {
   getSimulateTxAccessorContract,
 } from '@safe-global/protocol-kit/dist/src/contracts/safeDeploymentContracts'
 import { type JsonRpcProvider } from 'ethers'
-import { type ExtendedSafeInfo } from '@/store/safeInfoSlice'
+import type { ExtendedSafeInfo } from '@safe-global/store/slices/SafeInfo/types'
 
 const getEncodedSafeTx = (
   safeSDK: Safe,
@@ -88,7 +88,7 @@ const getGasLimitForZkSync = async (
   // https://github.com/zkSync-Community-Hub/zksync-developers/discussions/144
   const fakeEOAFromAddress = '0x330d9F4906EDA1f73f668660d1946bea71f48827'
   const customContracts = safeSDK.getContractManager().contractNetworks?.[safe.chainId]
-  const safeVersion = await safeSDK.getContractVersion()
+  const safeVersion = safeSDK.getContractVersion()
   const safeProvider = new SafeProvider({ provider: web3._getConnection().url })
   const fallbackHandlerContract = await getCompatibilityFallbackHandlerContract({
     safeProvider,
@@ -107,13 +107,13 @@ const getGasLimitForZkSync = async (
     safeTx.data.to,
     // @ts-ignore
     safeTx.data.value,
-    safeTx.data.data,
+    safeTx.data.data as `0x${string}`,
     safeTx.data.operation,
   ])
 
   const safeFunctionToEstimate: string = fallbackHandlerContract.encode('simulate', [
-    await simulateTxAccessorContract.getAddress(),
-    transactionDataToEstimate,
+    simulateTxAccessorContract.getAddress(),
+    transactionDataToEstimate as `0x${string}`,
   ])
 
   const gas = await web3.estimateGas({
@@ -161,7 +161,11 @@ const useGasLimit = (
     )
 
     // if we are dealing with zksync and the walletAddress is a Safe, we have to do some magic
-    if (safe.chainId === chains.zksync && (await web3ReadOnly.getCode(walletAddress)) !== '0x') {
+    // FIXME a new check to indicate ZKsync chain will be added to the config service and available under ChainInfo
+    if (
+      (safe.chainId === chains.zksync || safe.chainId === chains.lens) &&
+      (await web3ReadOnly.getCode(walletAddress)) !== '0x'
+    ) {
       return getGasLimitForZkSync(safe, web3ReadOnly, safeSDK, safeTx)
     }
 

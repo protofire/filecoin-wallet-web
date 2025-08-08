@@ -3,15 +3,19 @@ import semverSatisfies from 'semver/functions/satisfies'
 import memoize from 'lodash/memoize'
 import { keccak256, ethers, solidityPacked, getCreate2Address, type Provider } from 'ethers'
 
-import { type UndeployedSafesState, type ReplayedSafeProps } from '@/store/slices'
-import { sameAddress } from '@/utils/addresses'
-import { Safe_proxy_factory__factory } from '@/types/contracts'
+import {
+  type UndeployedSafesState,
+  type ReplayedSafeProps,
+} from '@safe-global/utils/features/counterfactual/store/types'
+import { sameAddress } from '@safe-global/utils/utils/addresses'
+import { areOwnersMatching } from '@safe-global/utils/utils/safe-setup-comparison'
+import { Safe_proxy_factory__factory } from '@safe-global/utils/types/contracts'
 import { extractCounterfactualSafeSetup } from '@/features/counterfactual/utils'
 import { encodeSafeSetupCall } from '@/components/new-safe/create/logic'
-import { FEATURES, hasFeature } from '@/utils/chains'
 import { type SafeItem } from '@/features/myAccounts/hooks/useAllSafes'
 import { type MultiChainSafeItem } from '@/features/myAccounts/hooks/useAllSafesGrouped'
-import { LATEST_SAFE_VERSION } from '@/config/constants'
+import { LATEST_SAFE_VERSION } from '@safe-global/utils/config/constants'
+import { FEATURES, hasFeature } from '@safe-global/utils/utils/chains'
 
 type SafeSetup = {
   owners: string[]
@@ -30,8 +34,9 @@ export const isMultiChainSafeItem = (safe: SafeItem | MultiChainSafeItem): safe 
   return false
 }
 
-const areOwnersMatching = (owners1: string[], owners2: string[]) =>
-  owners1.length === owners2.length && owners1.every((owner) => owners2.some((owner2) => sameAddress(owner, owner2)))
+export const isSafeItem = (safe: SafeItem | MultiChainSafeItem): safe is SafeItem => {
+  return !isMultiChainSafeItem(safe)
+}
 
 export const getSafeSetups = (
   safes: SafeItem[],

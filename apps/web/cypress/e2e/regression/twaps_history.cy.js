@@ -34,14 +34,17 @@ describe('Twaps history tests', { defaultCommandTimeout: 30000 }, () => {
     iframeSelector = `iframe[src*="${constants.swapWidget}"]`
     swaps.acceptLegalDisclaimer()
     main.getIframeBody(iframeSelector).within(() => {
+      cy.wait(20000) // Need more time to load UI
       swaps.switchToTwap()
       swaps.selectInputCurrency(swaps.swapTokens.cow)
       swaps.setInputValue(500)
       swaps.selectOutputCurrency(swaps.swapTokens.dai)
+      swaps.outputInputIsNotEmpty()
       swaps.confirmPriceImpact()
       swaps.verifyReviewOrderBtnIsVisible()
       swaps.getTwapInitialData().then((formData) => {
         cy.wrap(formData).as('twapFormData')
+        cy.wait(5000)
         swaps.clickOnReviewOrderBtn()
         swaps.placeTwapOrder()
         swaps.confirmPriceImpact()
@@ -50,9 +53,9 @@ describe('Twaps history tests', { defaultCommandTimeout: 30000 }, () => {
 
     cy.get('@twapFormData').then((formData) => {
       swaps.checkTwapValuesInReviewScreen(formData)
-      cy.get('p').contains(swapsHistory.slippage).parent().next().contains(slippage)
-      cy.get('p').contains(swapsHistory.widget_fee).parent().next().contains(widgetFee)
-      cy.get('p').contains(swapsHistory.limitPrice).parent().next().contains(limitPrice)
+      cy.get('[data-testid="slippage"] [data-testid="tx-data-row"]').invoke('text').should('match', slippage)
+      cy.get('[data-testid="widget-fee"] [data-testid="tx-data-row"]').invoke('text').should('match', widgetFee)
+      cy.get('[data-testid="limit-price"] [data-testid="tx-data-row"]').invoke('text').should('match', limitPrice)
     })
   })
 

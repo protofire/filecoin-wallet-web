@@ -149,6 +149,15 @@ export function checkSelectedToken(token) {
   cy.get(tokenBalance).contains(token)
 }
 
+function clickOnTokenSelector(index) {
+  cy.get(tokenBalance).eq(index).click()
+}
+
+export function selectToken(index, token) {
+  clickOnTokenSelector(index)
+  cy.get(tokenItem).contains(token).click()
+}
+
 function clickOnCurrencySelector() {
   cy.get(currencySelector).click()
 }
@@ -278,10 +287,10 @@ export function verifyEachRowHasCheckbox(state) {
     cy.get('tbody').within(() => {
       cy.get('tr').each(($row) => {
         if (state) {
-          cy.wrap($row).find('td').eq(3).find(hiddenTokenCheckbox).should('exist').should(state)
+          cy.wrap($row).find('td').eq(4).find(hiddenTokenCheckbox).should('exist').should(state)
           return
         }
-        cy.wrap($row).find('td').eq(3).find(hiddenTokenCheckbox).should('exist')
+        cy.wrap($row).find('td').eq(4).find(hiddenTokenCheckbox).should('exist')
       })
     })
   })

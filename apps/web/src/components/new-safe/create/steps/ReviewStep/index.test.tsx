@@ -8,8 +8,8 @@ import ReviewStep, { NetworkFee } from '@/components/new-safe/create/steps/Revie
 import * as useWallet from '@/hooks/wallets/useWallet'
 import { type ConnectedWallet } from '@/hooks/wallets/useOnboard'
 import { act, fireEvent, screen } from '@testing-library/react'
-import { LATEST_SAFE_VERSION } from '@/config/constants'
-import { type SafeVersion } from '@safe-global/safe-core-sdk-types'
+import { LATEST_SAFE_VERSION } from '@safe-global/utils/config/constants'
+import { type SafeVersion } from '@safe-global/types-kit'
 
 const mockChainInfo = {
   chainId: '100',

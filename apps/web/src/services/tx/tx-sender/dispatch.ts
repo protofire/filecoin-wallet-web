@@ -1,20 +1,17 @@
 import type { ConnectedWallet } from '@/hooks/wallets/useOnboard'
 import { isMultisigExecutionInfo } from '@/utils/transaction-guards'
-import { isHardwareWallet, isSmartContractWallet } from '@/utils/wallets'
+import { isEthSignWallet, isSmartContractWallet } from '@/utils/wallets'
 import type { MultiSendCallOnlyContractImplementationType } from '@safe-global/protocol-kit'
-import {
-  type ChainInfo,
-  relayTransaction,
-  type SafeInfo,
-  type TransactionDetails,
-} from '@safe-global/safe-gateway-typescript-sdk'
+import { type ChainInfo, relayTransaction, type TransactionDetails } from '@safe-global/safe-gateway-typescript-sdk'
+import { type SafeState } from '@safe-global/store/gateway/AUTO_GENERATED/safes'
+
 import type {
   SafeSignature,
   SafeTransaction,
   Transaction,
   TransactionOptions,
   TransactionResult,
-} from '@safe-global/safe-core-sdk-types'
+} from '@safe-global/types-kit'
 import { didRevert } from '@/utils/ethers-utils'
 import { type SpendingLimitTxParams } from '@/components/tx-flow/flows/TokenTransfer/ReviewSpendingLimitTx'
 import { getSpendingLimitContract } from '@/services/contracts/spendingLimitContracts'
@@ -33,10 +30,11 @@ import {
   prepareApproveTxHash,
 } from './sdk'
 import { createWeb3, getUserNonce } from '@/hooks/wallets/web3'
-import { asError } from '@/services/exceptions/utils'
+import { asError } from '@safe-global/utils/services/exceptions/utils'
 import chains from '@/config/chains'
 import { createExistingTx } from './create'
-import { getLatestSafeVersion } from '@/utils/chains'
+
+import { getLatestSafeVersion } from '@safe-global/utils/utils/chains'
 
 /**
  * Propose a transaction
@@ -116,7 +114,7 @@ export const dispatchProposerTxSigning = async (safeTx: SafeTransaction, wallet:
   const sdk = await getSafeSDKWithSigner(wallet.provider)
 
   let signature: SafeSignature
-  if (isHardwareWallet(wallet)) {
+  if (isEthSignWallet(wallet)) {
     const txHash = await sdk.getTransactionHash(safeTx)
     signature = await sdk.signHash(txHash)
   } else {
@@ -137,7 +135,7 @@ export const dispatchOnChainSigning = async (
   safeTx: SafeTransaction,
   txId: string,
   provider: Eip1193Provider,
-  chainId: SafeInfo['chainId'],
+  chainId: SafeState['chainId'],
   signerAddress: string,
   safeAddress: string,
   isNestedSafe: boolean,
@@ -146,7 +144,10 @@ export const dispatchOnChainSigning = async (
   const safeTxHash = await sdk.getTransactionHash(safeTx)
   const eventParams = { txId, nonce: safeTx.data.nonce }
 
-  const options = chainId === chains.zksync ? { gasLimit: ZK_SYNC_ON_CHAIN_SIGNATURE_GAS_LIMIT } : undefined
+  const options =
+    chainId === chains.zksync || chainId === chains.lens
+      ? { gasLimit: ZK_SYNC_ON_CHAIN_SIGNATURE_GAS_LIMIT }
+      : undefined
   let txHashOrParentSafeTxHash: string
   try {
     // TODO: This is a workaround until there is a fix for unchecked transactions in the protocol-kit
@@ -184,7 +185,7 @@ export const dispatchSafeTxSpeedUp = async (
   txOptions: Omit<TransactionOptions, 'nonce'> & { nonce: number },
   txId: string,
   provider: Eip1193Provider,
-  chainId: SafeInfo['chainId'],
+  chainId: SafeState['chainId'],
   signerAddress: string,
   safeAddress: string,
   nonce: number,
@@ -225,7 +226,7 @@ export const dispatchSafeTxSpeedUp = async (
     txHash: result.hash,
     signerAddress,
     signerNonce,
-    gasLimit: txOptions.gasLimit,
+    gasLimit: txOptions.gasLimit?.toString(),
     txType: 'SafeTx',
   })
 
@@ -316,7 +317,7 @@ export const dispatchTxExecution = async (
     txHash: result.hash,
     signerAddress,
     signerNonce,
-    gasLimit: txOptions.gasLimit,
+    gasLimit: txOptions.gasLimit?.toString(),
     txType: 'SafeTx',
   })
 
@@ -326,16 +327,15 @@ export const dispatchTxExecution = async (
 export const dispatchBatchExecution = async (
   txs: TransactionDetails[],
   multiSendContract: MultiSendCallOnlyContractImplementationType,
-  multiSendTxData: string,
+  multiSendTxData: `0x${string}`,
   provider: Eip1193Provider,
   signerAddress: string,
-  safeAddress: string,
   overrides: Omit<Overrides, 'nonce'> & { nonce: number },
   nonce: number,
 ) => {
   const groupKey = multiSendTxData
 
-  let result: ContractTransactionResponse
+  let result: TransactionResponse
   const txIds = txs.map((tx) => tx.txId)
   let signerNonce = overrides.nonce
   let txData = multiSendContract.encode('multiSend', [multiSendTxData])
@@ -345,8 +345,13 @@ export const dispatchBatchExecution = async (
       signerNonce = await getUserNonce(signerAddress)
     }
     const signer = await getUncheckedSigner(provider)
-    // @ts-ignore
-    result = await multiSendContract.contract.connect(signer).multiSend(multiSendTxData, overrides)
+
+    result = await signer.sendTransaction({
+      to: multiSendContract.getAddress(),
+      value: '0',
+      data: txData,
+      ...overrides,
+    })
 
     txIds.forEach((txId) => {
       txDispatch(TxEvent.EXECUTING, { txId, groupKey, nonce })
@@ -357,7 +362,7 @@ export const dispatchBatchExecution = async (
     })
     throw err
   }
-  const txTo = await multiSendContract.getAddress()
+  const txTo = multiSendContract.getAddress()
 
   txIds.forEach((txId) => {
     txDispatch(TxEvent.PROCESSING, {
@@ -428,9 +433,9 @@ export const dispatchSpendingLimitTxExecution = async (
   txParams: SpendingLimitTxParams,
   txOptions: TransactionOptions,
   provider: Eip1193Provider,
-  chainId: SafeInfo['chainId'],
+  chainId: SafeState['chainId'],
   safeAddress: string,
-  safeModules: SafeInfo['modules'],
+  safeModules: SafeState['modules'],
 ) => {
   const id = JSON.stringify(txParams)
 
@@ -482,24 +487,32 @@ export const dispatchSpendingLimitTxExecution = async (
   return result?.hash
 }
 
-export const dispatchSafeAppsTx = async (
-  safeTx: SafeTransaction,
-  safeAppRequestId: RequestId,
-  provider: Eip1193Provider,
-  txId?: string,
-): Promise<string> => {
-  const sdk = await getSafeSDKWithSigner(provider)
-  const safeTxHash = await sdk.getTransactionHash(safeTx)
+export async function dispatchSafeAppsTx(
+  args: { safeAppRequestId: RequestId; txId?: string } & (
+    | { safeTx: SafeTransaction; provider: Eip1193Provider }
+    | { safeTxHash: string }
+  ),
+): Promise<string> {
+  let safeTxHash: string
+  if ('safeTx' in args && 'provider' in args) {
+    const { safeTx, provider } = args
+    const sdk = await getSafeSDKWithSigner(provider)
+    safeTxHash = await sdk.getTransactionHash(safeTx)
+  } else {
+    safeTxHash = args.safeTxHash
+  }
+
+  const { txId, safeAppRequestId } = args
   txDispatch(TxEvent.SAFE_APPS_REQUEST, { safeAppRequestId, safeTxHash, txId })
   return safeTxHash
 }
 
 export const dispatchTxRelay = async (
   safeTx: SafeTransaction,
-  safe: SafeInfo,
+  safe: SafeState,
   txId: string,
   chain: ChainInfo,
-  gasLimit?: string | number,
+  gasLimit?: string | number | bigint,
 ) => {
   const readOnlySafeContract = await getReadOnlyCurrentGnosisSafeContract(safe)
 
@@ -543,13 +556,14 @@ export const dispatchTxRelay = async (
 export const dispatchBatchExecutionRelay = async (
   txs: TransactionDetails[],
   multiSendContract: MultiSendCallOnlyContractImplementationType,
-  multiSendTxData: string,
+  multiSendTxData: `0x${string}`,
   chainId: string,
   safeAddress: string,
   safeVersion: string,
 ) => {
-  const to = await multiSendContract.getAddress()
-  const data = multiSendContract.contract.interface.encodeFunctionData('multiSend', [multiSendTxData])
+  const to = multiSendContract.getAddress()
+
+  const data = multiSendContract.encode('multiSend', [multiSendTxData])
   const groupKey = multiSendTxData
 
   let relayResponse

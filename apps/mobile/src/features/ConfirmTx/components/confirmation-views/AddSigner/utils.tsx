@@ -9,6 +9,7 @@ import { Chain } from '@safe-global/store/gateway/AUTO_GENERATED/chains'
 import { Identicon } from '@/src/components/Identicon'
 import { NormalizedSettingsChangeTransaction } from '../../ConfirmationView/types'
 import { CopyButton } from '@/src/components/CopyButton'
+import { TouchableOpacity } from 'react-native'
 
 export const getSignerName = (txInfo: NormalizedSettingsChangeTransaction) => {
   if (!txInfo.settingsInfo) {
@@ -28,10 +29,11 @@ export const formatAddSignerItems = (
   txInfo: NormalizedSettingsChangeTransaction,
   chain: Chain,
   executionInfo: MultisigExecutionDetails,
+  viewOnExplorer: () => void,
 ) => {
   const newSignerAddress = getSignerName(txInfo)
 
-  return [
+  const items = [
     {
       label: 'New signer',
       render: () => (
@@ -40,20 +42,9 @@ export const formatAddSignerItems = (
           <Text fontSize="$4">{newSignerAddress}</Text>
           <CopyButton value={txInfo.settingsInfo?.owner?.value} color={'$textSecondaryLight'} />
 
-          <SafeFontIcon name="external-link" size={14} color="textSecondaryLight" />
-        </View>
-      ),
-    },
-    {
-      label: 'Threshold change',
-      render: () => (
-        <View flexDirection="row" alignItems="center" gap="$2">
-          <Text fontSize="$4">
-            {txInfo.settingsInfo?.threshold}/{executionInfo.signers.length}
-          </Text>
-          <Text textDecorationLine="line-through" color="$textSecondaryLight" fontSize="$4">
-            {executionInfo.confirmationsRequired}/{executionInfo.signers.length}
-          </Text>
+          <TouchableOpacity onPress={viewOnExplorer}>
+            <SafeFontIcon name="external-link" size={14} color="$textSecondaryLight" />
+          </TouchableOpacity>
         </View>
       ),
     },
@@ -67,4 +58,23 @@ export const formatAddSignerItems = (
       ),
     },
   ]
+
+  const hasThresholdChanged = txInfo.settingsInfo?.threshold !== executionInfo.confirmationsRequired
+  if (hasThresholdChanged) {
+    items.push({
+      label: 'Threshold change',
+      render: () => (
+        <View flexDirection="row" alignItems="center" gap="$2">
+          <Text fontSize="$4">
+            {txInfo.settingsInfo?.threshold}/{executionInfo.signers.length}
+          </Text>
+          <Text textDecorationLine="line-through" color="$textSecondaryLight" fontSize="$4">
+            {executionInfo.confirmationsRequired}/{executionInfo.signers.length}
+          </Text>
+        </View>
+      ),
+    })
+  }
+
+  return items
 }

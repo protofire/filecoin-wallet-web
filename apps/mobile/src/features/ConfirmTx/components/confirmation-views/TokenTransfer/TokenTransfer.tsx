@@ -1,7 +1,6 @@
 import React from 'react'
 import { Container } from '@/src/components/Container'
-import { View, YStack, Text, Button } from 'tamagui'
-import Share from 'react-native-share'
+import { View, YStack, Text, Button, H3 } from 'tamagui'
 import { SafeFontIcon } from '@/src/components/SafeFontIcon'
 import { Logo } from '@/src/components/Logo'
 import { EthAddress } from '@/src/components/EthAddress'
@@ -17,29 +16,25 @@ import { selectChainById } from '@/src/store/chains'
 import { RootState } from '@/src/store'
 import { useDefinedActiveSafe } from '@/src/store/hooks/activeSafe'
 import { Address } from '@/src/types/address'
-import Logger from '@/src/utils/logger'
+import { TokenAmount } from '@/src/components/TokenAmount'
+import { useOpenExplorer } from '@/src/features/ConfirmTx/hooks/useOpenExplorer'
+import { ParametersButton } from '../../ParametersButton'
+
 interface TokenTransferProps {
+  txId: string
   txInfo: TransferTransactionInfo
   executionInfo: MultisigExecutionDetails
   executedAt: number
 }
 
-export function TokenTransfer({ txInfo, executionInfo, executedAt }: TokenTransferProps) {
+export function TokenTransfer({ txId, txInfo, executionInfo, executedAt }: TokenTransferProps) {
   const activeSafe = useDefinedActiveSafe()
   const activeChain = useAppSelector((state: RootState) => selectChainById(state, activeSafe.chainId))
-  const { value, tokenSymbol, logoUri } = useTokenDetails(txInfo)
+  const { value, tokenSymbol, logoUri, decimals } = useTokenDetails(txInfo)
 
   const recipientAddress = txInfo.recipient.value as Address
 
-  const onPressShare = async () => {
-    Share.open({
-      title: 'Recipient address',
-      message: recipientAddress,
-      type: 'text/plain',
-    }).then((res) => {
-      Logger.info(res.message)
-    })
-  }
+  const viewOnExplorer = useOpenExplorer(recipientAddress)
 
   return (
     <>
@@ -48,7 +43,17 @@ export function TokenTransfer({ txInfo, executionInfo, executedAt }: TokenTransf
         badgeIcon="transaction-outgoing"
         badgeThemeName="badge_error"
         badgeColor="$error"
-        title={`-${value} ${tokenSymbol}`}
+        title={
+          <H3 fontWeight={600}>
+            <TokenAmount
+              value={value}
+              decimals={decimals}
+              tokenSymbol={tokenSymbol}
+              direction={txInfo.direction}
+              preciseAmount
+            />
+          </H3>
+        }
         submittedAt={executionInfo?.submittedAt || executedAt}
       />
 
@@ -58,22 +63,18 @@ export function TokenTransfer({ txInfo, executionInfo, executedAt }: TokenTransf
             <View alignItems="center" flexDirection="row" justifyContent="space-between">
               <Text color="$textSecondaryLight">To</Text>
 
-              <View flexDirection="row" alignItems="center">
-                <View flexDirection="row" alignItems="center" gap="$2">
-                  <Identicon address={recipientAddress} size={24} />
-                  <EthAddress
-                    address={recipientAddress}
-                    copy
-                    copyProps={{ color: '$textSecondaryLight', size: 18 }}
-                    textProps={{ fontSize: '$4' }}
-                  />
-                </View>
+              <View flexDirection="row" alignItems="center" gap="$2">
+                <Identicon address={recipientAddress} size={24} />
+                <EthAddress
+                  address={recipientAddress}
+                  copy
+                  copyProps={{ color: '$textSecondaryLight', size: 18 }}
+                  textProps={{ fontSize: '$4' }}
+                />
                 <Button
-                  onPress={() => {
-                    onPressShare()
-                  }}
+                  onPress={viewOnExplorer}
+                  marginLeft={-10}
                   height={18}
-                  style={{ marginLeft: -12 }}
                   pressStyle={{ backgroundColor: 'transparent' }}
                 >
                   <SafeFontIcon name="external-link" color="$textSecondaryLight" size={16} />
@@ -89,6 +90,8 @@ export function TokenTransfer({ txInfo, executionInfo, executedAt }: TokenTransf
                 <Text fontSize="$4">{activeChain?.chainName}</Text>
               </View>
             </View>
+
+            <ParametersButton txId={txId} />
           </Container>
         </YStack>
       </View>

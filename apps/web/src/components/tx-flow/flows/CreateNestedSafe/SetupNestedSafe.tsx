@@ -15,7 +15,7 @@ import {
 } from '@mui/material'
 import classNames from 'classnames'
 import { Controller, FormProvider, useFieldArray, useForm, useFormContext } from 'react-hook-form'
-import type { ReactElement } from 'react'
+import { useContext, type ReactElement } from 'react'
 
 import InfoIcon from '@/public/images/notifications/info.svg'
 import AddIcon from '@/public/images/common/add.svg'
@@ -28,12 +28,12 @@ import tokenInputCss from '@/components/common/TokenAmountInput/styles.module.cs
 import NumberField from '@/components/common/NumberField'
 import { useVisibleBalances } from '@/hooks/useVisibleBalances'
 import { AutocompleteItem } from '@/components/tx-flow/flows/TokenTransfer/CreateTokenTransfer'
-import { validateDecimalLength, validateLimitedAmount } from '@/utils/validation'
-import { safeFormatUnits } from '@/utils/formatters'
+import { validateDecimalLength, validateLimitedAmount } from '@safe-global/utils/utils/validation'
+import { safeFormatUnits } from '@safe-global/utils/utils/formatters'
 import { useMnemonicPrefixedSafeName } from '@/hooks/useMnemonicName'
-
 import css from '@/components/tx-flow/flows/CreateNestedSafe/styles.module.css'
 import commonCss from '@/components/tx-flow/common/styles.module.css'
+import { TxFlowContext, type TxFlowContextType } from '../../TxFlowProvider'
 
 export type SetupNestedSafeForm = {
   [SetupNestedSafeFormFields.name]: string
@@ -50,25 +50,20 @@ export enum SetupNestedSafeFormAssetFields {
   amount = 'amount',
 }
 
-export function SetUpNestedSafe({
-  params,
-  onSubmit,
-}: {
-  params: SetupNestedSafeForm
-  onSubmit: (params: SetupNestedSafeForm) => void
-}): ReactElement {
+export function SetUpNestedSafe(): ReactElement {
   const addressBook = useAddressBook()
   const safeAddress = useSafeAddress()
   const randomName = useMnemonicPrefixedSafeName('Nested')
   const fallbackName = addressBook[safeAddress] ?? randomName
+  const { onNext, data } = useContext<TxFlowContextType<SetupNestedSafeForm>>(TxFlowContext)
 
   const formMethods = useForm<SetupNestedSafeForm>({
-    defaultValues: params,
+    defaultValues: data,
     mode: 'onChange',
   })
 
   const onFormSubmit = (data: SetupNestedSafeForm) => {
-    onSubmit({
+    onNext({
       ...data,
       [SetupNestedSafeFormFields.name]: data[SetupNestedSafeFormFields.name] || fallbackName,
     })
@@ -85,6 +80,7 @@ export function SetUpNestedSafe({
 
           <FormControl fullWidth sx={{ mt: 3 }}>
             <NameInput
+              data-testid="nested-safe-name-input"
               name={SetupNestedSafeFormFields.name}
               label="Name"
               placeholder={fallbackName}
@@ -110,7 +106,7 @@ export function SetUpNestedSafe({
           <Divider className={commonCss.nestedDivider} />
 
           <CardActions>
-            <Button variant="contained" type="submit">
+            <Button data-testid="next-button" variant="contained" type="submit">
               Next
             </Button>
           </CardActions>
@@ -161,7 +157,7 @@ function AssetInputs({ name }: { name: SetupNestedSafeFormFields.assets }) {
           )
         })
         return (
-          <Box className={css.assetInput} key={field.id}>
+          <Box data-testid="asset-data" className={css.assetInput} key={field.id}>
             <FormControl className={classNames(tokenInputCss.outline, { [tokenInputCss.error]: isError })} fullWidth>
               <InputLabel shrink required className={tokenInputCss.label}>
                 {label}
@@ -188,11 +184,12 @@ function AssetInputs({ name }: { name: SetupNestedSafeFormFields.assets }) {
                     }
                     return (
                       <NumberField
+                        data-testid="amount-input"
                         variant="standard"
                         InputProps={{
                           disableUnderline: true,
                           endAdornment: (
-                            <Button className={tokenInputCss.max} onClick={onClickMax}>
+                            <Button data-testid="max-button" className={tokenInputCss.max} onClick={onClickMax}>
                               Max
                             </Button>
                           ),
@@ -214,6 +211,7 @@ function AssetInputs({ name }: { name: SetupNestedSafeFormFields.assets }) {
                   render={({ field }) => {
                     return (
                       <TextField
+                        data-testid="token-selector"
                         select
                         variant="standard"
                         InputProps={{
@@ -238,7 +236,7 @@ function AssetInputs({ name }: { name: SetupNestedSafeFormFields.assets }) {
               </div>
             </FormControl>
 
-            <IconButton onClick={() => fieldArray.remove(index)}>
+            <IconButton data-testid="remove-asset-icon" onClick={() => fieldArray.remove(index)}>
               <SvgIcon component={DeleteIcon} inheritViewBox />
             </IconButton>
           </Box>
@@ -246,6 +244,7 @@ function AssetInputs({ name }: { name: SetupNestedSafeFormFields.assets }) {
       })}
 
       <Button
+        data-testid="fund-asset-button"
         variant="text"
         onClick={() => {
           fieldArray.append(defaultAsset, { shouldFocus: true })

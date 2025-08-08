@@ -4,12 +4,13 @@ import type { ReactElement } from 'react'
 
 import AddIcon from '@/public/images/common/add.svg'
 import { ModalDialogTitle } from '@/components/common/ModalDialog'
-import { CreateNestedSafe } from '@/components/tx-flow/flows/CreateNestedSafe'
+import { CreateNestedSafeFlow } from '@/components/tx-flow/flows'
 import { TxModalContext } from '@/components/tx-flow'
 import { NestedSafesList } from '@/components/sidebar/NestedSafesList'
 import { NestedSafeInfo } from '@/components/sidebar/NestedSafeInfo'
 import Track from '@/components/common/Track'
 import { NESTED_SAFE_EVENTS } from '@/services/analytics/events/nested-safes'
+import CheckWallet from '@/components/common/CheckWallet'
 
 export function NestedSafesPopover({
   anchorEl,
@@ -25,7 +26,7 @@ export function NestedSafesPopover({
   const { setTxFlow } = useContext(TxModalContext)
 
   const onAdd = () => {
-    setTxFlow(<CreateNestedSafe />)
+    setTxFlow(<CreateNestedSafeFlow />)
     onClose()
   }
 
@@ -61,7 +62,15 @@ export function NestedSafesPopover({
       >
         Nested Safes
       </ModalDialogTitle>
-      <Stack p={3} pt={2} display="flex" flexDirection="column" flex={1} overflow="hidden">
+      <Stack
+        data-testid="nested-safe-list"
+        p={3}
+        pt={2}
+        display="flex"
+        flexDirection="column"
+        flex={1}
+        overflow="hidden"
+      >
         {nestedSafes.length === 0 ? (
           <NestedSafeInfo />
         ) : (
@@ -77,10 +86,20 @@ export function NestedSafesPopover({
         )}
         {!hideCreationButton && (
           <Track {...NESTED_SAFE_EVENTS.ADD}>
-            <Button variant="contained" sx={{ width: '100%', mt: 3 }} onClick={onAdd}>
-              <SvgIcon component={AddIcon} inheritViewBox fontSize="small" />
-              Add Nested Safe
-            </Button>
+            <CheckWallet>
+              {(ok) => (
+                <Button
+                  data-testid="add-nested-safe-button"
+                  variant="contained"
+                  sx={{ width: '100%', mt: 3 }}
+                  onClick={onAdd}
+                  disabled={!ok}
+                >
+                  <SvgIcon component={AddIcon} inheritViewBox fontSize="small" />
+                  Add Nested Safe
+                </Button>
+              )}
+            </CheckWallet>
           </Track>
         )}
       </Stack>

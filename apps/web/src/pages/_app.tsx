@@ -48,6 +48,8 @@ import GeoblockingProvider from '@/components/common/GeoblockingProvider'
 import { useVisitedSafes } from '@/features/myAccounts/hooks/useVisitedSafes'
 import OutreachPopup from '@/features/targetedOutreach/components/OutreachPopup'
 import { GATEWAY_URL } from '@/config/gateway'
+import { useDatadog } from '@/services/datadog'
+import useMixpanel from '@/services/analytics/useMixpanel'
 
 const reduxStore = makeStore()
 
@@ -56,7 +58,9 @@ const InitApp = (): null => {
   setNewGatewayBaseUrl(GATEWAY_URL)
   useHydrateStore(reduxStore)
   useAdjustUrl()
+  useDatadog()
   useGtm()
+  useMixpanel()
   useNotificationTracking()
   useInitSession()
   useLoadableStores()

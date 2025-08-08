@@ -7,7 +7,7 @@ import AddIcon from '@/public/images/common/add.svg'
 import EditIcon from '@/public/images/common/edit.svg'
 import CheckWallet from '@/components/common/CheckWallet'
 import EthHashInfo from '@/components/common/EthHashInfo'
-import { CreateNestedSafe } from '@/components/tx-flow/flows/CreateNestedSafe'
+import { CreateNestedSafeFlow } from '@/components/tx-flow/flows'
 import EntryDialog from '@/components/address-book/EntryDialog'
 import { TxModalContext } from '@/components/tx-flow'
 import EnhancedTable from '@/components/common/EnhancedTable'
@@ -16,9 +16,9 @@ import { useGetOwnedSafesQuery } from '@/store/slices'
 import { NESTED_SAFE_EVENTS } from '@/services/analytics/events/nested-safes'
 import Track from '@/components/common/Track'
 import { useHasFeature } from '@/hooks/useChains'
-import { FEATURES } from '@/utils/chains'
 
 import tableCss from '@/components/common/EnhancedTable/styles.module.css'
+import { FEATURES } from '@safe-global/utils/utils/chains'
 
 export function NestedSafesList(): ReactElement | null {
   const isEnabled = useHasFeature(FEATURES.NESTED_SAFES)
@@ -96,7 +96,7 @@ export function NestedSafesList(): ReactElement | null {
               <CheckWallet>
                 {(isOk) => (
                   <Button
-                    onClick={() => setTxFlow(<CreateNestedSafe />)}
+                    onClick={() => setTxFlow(<CreateNestedSafeFlow />)}
                     variant="text"
                     startIcon={<SvgIcon component={AddIcon} inheritViewBox fontSize="small" />}
                     disabled={!isOk}

@@ -13,9 +13,9 @@ import { getAssertedChainSigner } from '@/services/tx/tx-sender/sdk'
 import { useAppDispatch } from '@/store'
 import { useAddProposerMutation } from '@/store/api/gateway'
 import { showNotification } from '@/store/notificationsSlice'
-import { shortenAddress } from '@/utils/formatters'
-import { addressIsNotCurrentSafe } from '@/utils/validation'
-import { isHardwareWallet } from '@/utils/wallets'
+import { shortenAddress } from '@safe-global/utils/utils/formatters'
+import { addressIsNotCurrentSafe, addressIsNotOwner } from '@safe-global/utils/utils/validation'
+import { isEthSignWallet } from '@/utils/wallets'
 import { Close } from '@mui/icons-material'
 import {
   Alert,
@@ -31,8 +31,9 @@ import {
   Typography,
 } from '@mui/material'
 import type { Delegate } from '@safe-global/safe-gateway-typescript-sdk/dist/types/delegates'
-import { type BaseSyntheticEvent, useState } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
+import { type BaseSyntheticEvent, useCallback, useMemo, useState } from 'react'
+import { FormProvider, useForm, type Validate } from 'react-hook-form'
+import useSafeInfo from '@/hooks/useSafeInfo'
 
 type UpsertProposerProps = {
   onClose: () => void
@@ -59,6 +60,7 @@ const UpsertProposer = ({ onClose, onSuccess, proposer }: UpsertProposerProps) =
   const chainId = useChainId()
   const wallet = useWallet()
   const safeAddress = useSafeAddress()
+  const { safe } = useSafeInfo()
 
   const methods = useForm<ProposerEntry>({
     defaultValues: {
@@ -68,7 +70,14 @@ const UpsertProposer = ({ onClose, onSuccess, proposer }: UpsertProposerProps) =
     mode: 'onChange',
   })
 
-  const notCurrentSafe = addressIsNotCurrentSafe(safeAddress, 'Cannot add Safe Account itself as proposer')
+  const safeOwnerAddresses = useMemo(() => safe.owners.map((owner) => owner.value), [safe.owners])
+
+  const validateAddress = useCallback<Validate<string>>(
+    (value) =>
+      addressIsNotCurrentSafe(safeAddress, 'Cannot add Safe Account itself as proposer')(value) ??
+      addressIsNotOwner(safeOwnerAddresses, 'Cannot add Safe Owner as proposer')(value),
+    [safeAddress, safeOwnerAddresses],
+  )
 
   const { handleSubmit, formState } = methods
 
@@ -79,9 +88,9 @@ const UpsertProposer = ({ onClose, onSuccess, proposer }: UpsertProposerProps) =
     setIsLoading(true)
 
     try {
-      const hardwareWallet = isHardwareWallet(wallet)
+      const shouldEthSign = isEthSignWallet(wallet)
       const signer = await getAssertedChainSigner(wallet.provider)
-      const signature = hardwareWallet
+      const signature = shouldEthSign
         ? await signProposerData(data.address, signer)
         : await signProposerTypedData(chainId, data.address, signer)
 
@@ -92,7 +101,7 @@ const UpsertProposer = ({ onClose, onSuccess, proposer }: UpsertProposerProps) =
         label: data.name,
         delegate: data.address,
         safeAddress,
-        isHardwareWallet: hardwareWallet,
+        shouldEthSign,
       })
 
       trackEvent(
@@ -171,7 +180,7 @@ const UpsertProposer = ({ onClose, onSuccess, proposer }: UpsertProposerProps) =
                 <AddressBookInput
                   name="address"
                   label="Address"
-                  validate={notCurrentSafe}
+                  validate={validateAddress}
                   variant="outlined"
                   fullWidth
                   required

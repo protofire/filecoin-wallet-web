@@ -16,7 +16,6 @@ export const getHashedExplorerUrl = (
 
   return _replaceTemplate(blockExplorerUriTemplate[param], { [param]: hash })
 }
-
 export const getExplorerLink = (
   hash: string,
   blockExplorerUriTemplate: Chain['blockExplorerUriTemplate'],

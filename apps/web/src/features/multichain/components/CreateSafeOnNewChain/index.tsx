@@ -16,15 +16,16 @@ import { useAppDispatch, useAppSelector } from '@/store'
 import { selectRpc } from '@/store/settingsSlice'
 import { createWeb3ReadOnly } from '@/hooks/wallets/web3'
 import { hasMultiChainAddNetworkFeature, predictAddressBasedOnReplayData } from '@/features/multichain/utils/utils'
-import { sameAddress } from '@/utils/addresses'
+import { sameAddress } from '@safe-global/utils/utils/addresses'
 import ExternalLink from '@/components/common/ExternalLink'
 import { useRouter } from 'next/router'
 import ChainIndicator from '@/components/common/ChainIndicator'
 import { type ChainInfo } from '@safe-global/safe-gateway-typescript-sdk'
 import { useMemo, useState } from 'react'
-import { useCompatibleNetworks } from '../../hooks/useCompatibleNetworks'
-import { PayMethod } from '@/features/counterfactual/PayNowPayLater'
+import { useCompatibleNetworks } from '@safe-global/utils/features/multichain/hooks/useCompatibleNetworks'
 import { MULTICHAIN_HELP_ARTICLE } from '@/config/constants'
+import { PayMethod } from '@safe-global/utils/features/counterfactual/types'
+import { type Chain } from '@safe-global/store/gateway/AUTO_GENERATED/chains'
 
 type CreateSafeOnNewChainForm = {
   chainId: string
@@ -85,7 +86,7 @@ const ReplaySafeDialog = ({
 
       // We need to create a readOnly provider of the deployed chain
       const customRpcUrl = selectedChain ? customRpc?.[selectedChain.chainId] : undefined
-      const provider = createWeb3ReadOnly(selectedChain, customRpcUrl)
+      const provider = createWeb3ReadOnly(selectedChain as ChainInfo, customRpcUrl)
       if (!provider) {
         return
       }
@@ -210,7 +211,15 @@ const ReplaySafeDialog = ({
               ) : noChainsAvailable ? (
                 <ErrorMessage level="error">This Safe cannot be replayed on any chains.</ErrorMessage>
               ) : (
-                <>{!chain && <NetworkInput required name="chainId" chainConfigs={replayableChains ?? []} />}</>
+                <>
+                  {!chain && (
+                    <NetworkInput
+                      required
+                      name="chainId"
+                      chainConfigs={(replayableChains as (ChainInfo & { available: boolean })[]) ?? []}
+                    />
+                  )}
+                </>
               )}
 
               {creationError && (
@@ -269,12 +278,12 @@ export const CreateSafeOnNewChain = ({
   )
 
   const safeCreationResult = useSafeCreationData(safeAddress, deployedChains)
-  const allCompatibleChains = useCompatibleNetworks(safeCreationResult[0])
+  const allCompatibleChains = useCompatibleNetworks(safeCreationResult[0], configs as Chain[])
   const isUnsupportedSafeCreationVersion = Boolean(!allCompatibleChains?.length)
   const replayableChains = useMemo(
     () =>
       allCompatibleChains?.filter(
-        (config) => !deployedChainIds.includes(config.chainId) && hasMultiChainAddNetworkFeature(config),
+        (config) => !deployedChainIds.includes(config.chainId) && hasMultiChainAddNetworkFeature(config as ChainInfo),
       ) || [],
     [allCompatibleChains, deployedChainIds],
   )

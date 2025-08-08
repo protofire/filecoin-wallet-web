@@ -73,17 +73,29 @@ export const SafeButton = styled(Button, {
     },
 
     size: {
+      $xl: () => ({
+        fontSize: 14,
+        fontWeight: 700,
+        height: 'auto',
+        margin: 0,
+        paddingVertical: '$3',
+        textProps: {
+          lineHeight: 24,
+        },
+      }),
       $md: () => ({
         height: 'auto',
         paddingVertical: 14,
         paddingHorizontal: 20,
         margin: 0,
-        lineHeight: 20,
-        fontWeight: 600,
+        fontWeight: 700,
         letterSpacing: -0.1,
         fontSize: 14,
         scaleIcon: 0.9,
         scaleSpace: 0.3,
+        textProps: {
+          marginBottom: -2.5,
+        },
       }),
       $sm: () => ({
         height: 36,
@@ -91,8 +103,10 @@ export const SafeButton = styled(Button, {
         paddingHorizontal: '$3',
         fontWeight: 600,
         scaleIcon: 0.8,
-        lineHeight: 20,
         scaleSpace: 0.2,
+        textProps: {
+          marginBottom: -2.5,
+        },
       }),
     },
   } as const,

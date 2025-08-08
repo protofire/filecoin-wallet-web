@@ -13,9 +13,6 @@ const config: ConfigFile = {
     '../src/gateway/AUTO_GENERATED/about.ts': {
       filterEndpoints: [/^about/],
     },
-    '../src/gateway/AUTO_GENERATED/accounts.ts': {
-      filterEndpoints: [/^accounts/],
-    },
     '../src/gateway/AUTO_GENERATED/auth.ts': {
       filterEndpoints: [/^auth/],
     },
@@ -66,6 +63,12 @@ const config: ConfigFile = {
     },
     '../src/gateway/AUTO_GENERATED/transactions.ts': {
       filterEndpoints: [/^transactions/],
+    },
+    '../src/gateway/AUTO_GENERATED/users.ts': {
+      filterEndpoints: [/^users/],
+    },
+    '../src/gateway/AUTO_GENERATED/spaces.ts': {
+      filterEndpoints: [/^(spaces|members|spaceSafes)/],
     },
   },
 }

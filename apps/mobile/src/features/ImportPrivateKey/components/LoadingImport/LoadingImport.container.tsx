@@ -15,6 +15,7 @@ import { extractSignersFromSafes } from '@/src/features/ImportReadOnly/helpers/s
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query'
 import { SerializedError } from '@reduxjs/toolkit'
 import { LoadingScreen } from '@/src/components/LoadingScreen'
+import { selectCurrency } from '@/src/store/settingsSlice'
 
 const getData = (
   manySafes: SafesGetSafeOverviewV1ApiResponse | undefined,
@@ -40,14 +41,14 @@ const getError = (
 }
 
 export function LoadingImport() {
+  const glob = useGlobalSearchParams<{ safeAddress?: string; chainId?: string; import_safe?: string }>()
   const { address } = useLocalSearchParams()
   const chainIds = useAppSelector(selectAllChainsIds)
   const dispatch = useAppDispatch()
   const router = useRouter()
-  const glob = useGlobalSearchParams<{ safeAddress?: string; chainId?: string; import_safe?: string }>()
   // we use this screen on the "getting started" and there we don't have an active safe
   const activeSafe = useAppSelector(selectActiveSafe)
-
+  const currency = useAppSelector(selectCurrency)
   let safeAddress = glob.safeAddress
   let chainId = glob.chainId
   if (activeSafe) {
@@ -80,7 +81,7 @@ export function LoadingImport() {
       manySafesTrigger(
         {
           safes: chainIds.map((chainId: string) => makeSafeId(chainId, safeAddress as string)),
-          currency: 'usd',
+          currency,
           trusted: true,
           excludeSpam: true,
         },
@@ -120,6 +121,9 @@ export function LoadingImport() {
         params: {
           name: owner.name,
           address: owner.value,
+          safeAddress: safeAddress,
+          chainId: chainId,
+          import_safe: glob.import_safe,
         },
       })
     } else {

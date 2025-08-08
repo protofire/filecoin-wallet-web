@@ -3,7 +3,7 @@ version: 1.1
 last_update_date: November, 2024
 ---
 
-# **Terms and Conditions**
+Last updated: April, 2025
 
 Last updated: November, 2024\.
 
@@ -31,7 +31,87 @@ Our services (“Services”) primarily consist of enabling users to create thei
 
 1. “Safe Account”
 
-A Safe Account is a modular, self-custodial (i.e. not supervised by us) smart contract-based wallet not provided by CC. Safe Accounts are [**open-source**](https://github.com/safe-global/safe-contracts/) released under LGPL-3.0.
+[9\. Are we responsible for notifying you about events occuring in your Safe Account?](#9.-are-we-responsible-for-notifying-you-about-events-occuring-in-your-safe-account?)
+
+[10\. Are we responsible for flagging malicious transactions?](#10.-are-we-responsible-for-flagging-malicious-transactions?)
+
+[11\. Are we responsible for the issuance of the Safe Token and any related functionalities or reward programs?](#11.-are-we-responsible-for-the-issuance-of-the-safe-token-and-any-related-functionalities-or-reward-programs?)
+
+[12\. What is Cloud Storage and the Spaces feature?](#12.-what-is-cloud-storage-and-the-spaces-feature?)
+
+[13\. Can we terminate or limit your right to use our Services?](#13.-can-we-terminate-or-limit-your-right-to-use-our-services?)
+
+[14\. Can you terminate your Agreement with us?](#14.-can-you-terminate-your-agreement-with-us?)
+
+[15\. What licenses and access do we grant to you?](#15.-what-licenses-and-access-do-we-grant-to-you?)
+
+[16\. What can you expect from the Services and can we make changes to them?](#16.-what-can-you-expect-from-the-services-and-can-we-make-changes-to-them?)
+
+[17\. What do you agree, warrant and represent?](#17.-what-do-you-agree,-warrant-and-represent?)
+
+[18\. What about our liability to you?](#18.-what-about-our-liability-to-you?)
+
+[19\. What about viruses, bugs and security vulnerabilities?](#19.-what-about-viruses,-bugs-and-security-vulnerabilities?)
+
+[20\. What if an event outside our control happens that affects our Services?](#20.-what-if-an-event-outside-our-control-happens-that-affects-our-services?)
+
+[21\. Who is responsible for your tax liabilities?](#21.-who-is-responsible-for-your-tax-liabilities?)
+
+[22\. What if a court disagrees with part of this Agreement?](#22.-what-if-a-court-disagrees-with-part-of-this-agreement?)
+
+[23\. What if we do not enforce certain rights under this Agreement?](#23.-what-if-we-do-not-enforce-certain-rights-under-this-agreement?)
+
+[24\. Do third parties have rights?](#24.-do-third-parties-have-rights?)
+
+[25\. Can this Agreement be assigned?](#25.-can-this-agreement-be-assigned?)
+
+[26\. Which Clauses of this Agreement survive termination?](#26.-which-clauses-of-this-agreement-survive-termination?)
+
+[27\. Data Protection](#27.-data-protection)
+
+[28\. Which laws apply to the Agreement?](#28.-which-laws-apply-to-the-agreement?)
+
+[29\. How can you get support for Safe Accounts and tell us about any problems?](#29.-how-can-you-get-support-for-safe-accounts-and-tell-us-about-any-problems?)
+
+[30\. Where is the place of legal proceedings?](#30.-where-is-the-place-of-legal-proceedings?)
+
+[31\. Is this all?](#31.-is-this-all?)
+
+# 1\. What is the scope of the Terms? {#1.-what-is-the-scope-of-the-terms?}
+
+These Terms and Conditions (“**Terms**”) become part of any contract (“**Agreement**”) between you (“**you**”, “**yours**” or “**User**”) and Core Contributors GmbH (“**CC**”, “**we**”, “**our**” or “**us**”) provided we made these Terms accessible to you prior to entering into the Agreement and you consent to these Terms. We are a limited liability company registered with the commercial register of Berlin Charlottenburg under company number HRB 240421 B, with its registered office at c/o WeWork, Dircksenstr. 3, 10179 Berlin, Germany. You can contact us by writing to info@cc0x.dev.
+
+The Agreement is concluded by using the Mobile App, Web App and/or Browser Extension subject to these Terms. The use of our Services is only permitted to legal entities, partnerships and natural persons with unlimited legal capacity. In particular, minors are prohibited from using our Services.
+
+The application of your general terms and conditions is excluded. Your deviating, conflicting or supplementary general terms and conditions shall only become part of the Agreement if and to the extent that CC has expressly agreed to their application in writing. This consent requirement shall apply in any case, even if for example CC, being aware of your general terms and conditions, accepts payments by the contractual partner without reservations.
+
+We reserve the right to change these Terms at any time and without giving reasons, while considering and weighing your interests. The new Terms will be communicated to you in advance. If you do not accept the new Terms, you are no longer entitled to use the Services.
+
+# 2\. What do some of the capitalized terms mean in the Agreement? {#2.-what-do-some-of-the-capitalized-terms-mean-in-the-agreement?}
+
+“**Blockchain**” means a mathematically secured consensus ledger such as the Ethereum Virtual Machine, an Ethereum Virtual Machine compatible validation mechanism, or other decentralized validation mechanisms.
+
+“**Transaction**” means a change to the data set through a new entry in the continuous Blockchain.
+
+“**Smart Contract**” means a piece of source code deployed as an application on the Blockchain which can be executed, including self-execution of Transactions as well as execution triggered by 3rd parties.
+
+“**Token**” means a digital asset transferred in a Transaction, including ETH, ERC20, ERC721 and ERC1155 tokens.
+
+“**Wallet**” means a cryptographic storage solution permitting you to store cryptographic assets by correlation of a (i) Public Key and (ii) a Private Key, or a Smart Contract to receive, manage and send Tokens.
+
+“**Recovery Phrase**” means a series of secret words used to generate one or more Private Keys and derived Public Keys.
+
+“**Public Key**” means a unique sequence of numbers and letters within the Blockchain to distinguish the network participants from each other.
+
+“**Private Key**” means a unique sequence of numbers and/or letters required to initiate a Blockchain Transaction and should only be known by the legal owner of the Wallet.
+
+# 3\. What are the Services offered? {#3.-what-are-the-services-offered?}
+
+Our services (“**Services**”) primarily consist of enabling users to create their Safe Accounts and ongoing interaction with it on the Blockchain.
+
+1. “**Safe Account**”
+
+A Safe Account is a modular, self-custodial (i.e. not supervised by us) smart contract-based wallet not provided by CC. Safe Accounts are open-source released under LGPL-3.0.
 
 Smart contract wallet means, unlike a standard private key Wallet, that access control for authorizing any Transaction is defined in code. An example are multi-signature wallets which require that any Transaction must be signed by a minimum number of signing wallets whereby the specifics of the requirements to authorize a Transaction can be configured in code.
 
@@ -63,21 +143,47 @@ Our Services do not consist of:
 
 ### **5\. What do you need to know about Third-Party Services?**
 
-1. We provide you the possibility to interact with your Safe Account through Third-Party Services. Any activities you engage in with, or services you receive from a third party is between you and that third party directly. The conditions of service provisions, if any, shall be governed by the applicable contractual provisions between you and the respective provider of the Third-Party Service.  
-2. The Services rely in part on third-party and open-source software, including the Blockchain, and the continued development and support by third parties. There is no assurance or guarantee that those third parties will maintain their support of their software or that open-source software will continue to be maintained. This may have a material adverse effect on the Services.  
-3. This means specifically:  
-* We do not have any oversight over your activities with Third-Party Services especially by using Third-Party Safe Apps, and therefore we do not and cannot make any representation regarding their appropriateness and suitability for you.  
-* Third-Party Services are not hosted, owned, controlled or maintained by us. We also do not participate in the Transaction and will not and cannot monitor, verify, censor or edit the functioning or content of any Third-Party Service.  
-* We have not conducted any security audit, bug bounty or formal verification (whether internal or external) of the Third-Party Services.  
-* We have no control over, do not recommend, endorse, or otherwise take a position on the integrity, functioning of, content and your use of Third-Party Services, whose sole responsibility lies with the person from whom such services or content originated.  
-* When you access or use Third-Party Services you accept that there are risks in doing so and that you alone assume any such risks when choosing to interact with them. We are not liable for any errors or omissions or for any damages or loss you might suffer through interacting with those Third-Party Services, such as Third-Party Safe Apps.  
-* You know of the inherent risks of cryptographic and Blockchain-based systems and the high volatility of Token markets. Transactions undertaken in the Blockchain are irrevocable and irreversible and there is no possibility to refund Token that have been deployed.  
-* You should read the license requirements, terms and conditions as well as privacy policy of each Third-Party Service that you access or use. Certain Third-Party Services may involve complex Transactions that entail a high degree of risk.  
-* If you contribute integrations to Third-Party Services, you are responsible for all content you contribute, in any manner, and you must have all rights necessary to do so, in the manner in which you contribute it. You are responsible for all your activity in connection with any such Third-Party Service.  
-* Your interactions with persons found on or through the Third-Party Service, including payment and delivery of goods and services, financial transactions, and any other terms associated with such dealings, are solely between you and such persons. You agree that we shall not be responsible or liable for any loss or damage of any sort incurred as the result of any such dealings.  
-* If there is a dispute between you and the Third-Party Service provider or/and other users of the Third-Party Service, you agree that we are under no obligation to become involved. In the event that you have a dispute with one or more other users, you release us, our officers, employees, agents, contractors and successors from claims, demands, and damages of every kind or nature, known or unknown, suspected or unsuspected, disclosed or undisclosed, arising out of or in any way related to such disputes and/or our Services.
+1. You may view, have access to, and may use Third-Party Safe Apps and Third-Party Services within the Safe{Wallet} App. You view, access, or use Third-Party Safe Apps and Third-Party Services at your own election. Your reliance on Third-Party Safe Apps and Third-Party Services is subject to separate terms and conditions set forth by the applicable third party content and/or service provider (“Third-Party Terms”). Third-Party Terms may, amongst other things,
 
-### **6\. What are the fees for the Services?**
+   1. involve separate fees and charges,
+
+   2. include disclaimers or risk warnings,
+
+   3. apply a different terms and privacy policy.
+
+2. It is your responsibility to understand the Third-Party Terms, including how Third-Party Safe Apps and Third-Party Services use any of your information under their privacy policies.
+
+3. Third-Party Safe Apps and Third-Party Services are provided for your convenience only. We do not verify or control Third-Party Safe Apps and Third-Party Services.
+
+4. If we offer access to Third-Party Safe Apps and Third-Party Services in the Safe App free of charge by us (third-parties may charge separate fees), the liability for providing access to such Third-Party Safe Apps and Third-Party Services is limited pursuant to Section 18 below. Furthermore we reserve the right to cease to provide access to those Third-Party Safe Apps and Third-Party Services through the Safe{Wallet} App without notice.
+
+5. The Services rely in part on third-party and open-source software, including the Blockchain, and the continued development and support by third parties. There is no assurance or guarantee that those third parties will maintain their support of their software or that open-source software will continue to be maintained. This may have a material adverse effect on the Services.
+
+6. This means specifically:
+
+* We do not have any oversight over your activities with Third-Party Services especially by using Third-Party Safe Apps, and therefore we do not and cannot make any representation regarding their appropriateness and suitability for you.
+
+* Third-Party Safe Apps and Third-Party Services are not hosted, owned, controlled or maintained by us. We also do not participate in the Transaction and will not and cannot monitor, verify, censor or edit the functioning or content of any Third-Party Safe Apps and Third-Party Service.
+
+* We have not conducted any security audit, bug bounty or formal verification (whether internal or external) of the Third-Party Safe Apps and Third-Party Services.
+
+* We have no control over, do not recommend, endorse, or otherwise take a position on the integrity, functioning of, content and your use of Third-Party Safe Apps and Third-Party Services, whose sole responsibility lies with the person from whom such services or content originated.
+
+* When you access or use Third-Party Safe Apps and Third-Party Services you accept that there are risks in doing so and that you alone assume any such risks when choosing to interact with them. We are not liable for any errors or omissions or for any damages or loss you might suffer through interacting with those Third-Party Safe Apps and Third-Party Services.
+
+* You know of the inherent risks of cryptographic and Blockchain-based systems and the high volatility of Token markets. Transactions undertaken in the Blockchain are irrevocable and irreversible and there is no possibility to refund Token that have been deployed.
+
+* You should read the license requirements, terms and conditions as well as privacy policy of each Third-Party Safe Apps and Third-Party Service that you access or use. Certain Third-Party Safe Apps and Third-Party Services may involve complex Transactions that entail a high degree of risk.
+
+* If you contribute integrations to Third-Party Safe Apps and Third-Party Services, you are responsible for all content you contribute, in any manner, and you must have all rights necessary to do so, in the manner in which you contribute it. You are responsible for all your activity in connection with any such Third-Party Safe Apps and Third-Party Services.
+
+* Your interactions with persons found on or through the Third-Party Safe Apps and and Third-Party Services, including payment and delivery of goods and services, financial transactions, and any other terms associated with such dealings, are solely between you and such persons. You agree that we shall not be responsible or liable for any loss or damage of any sort incurred as the result of any such dealings.
+
+* If there is a dispute between you and the Third-Party Safe Apps or Third-Party Services provider or/and other users of the Third-Party Safe Apps or Third-Party Service, you agree that we are under no obligation to become involved. In the event that you have a dispute with one or more other users, you release us, our officers, employees, agents, contractors and successors from claims, demands, and damages of every kind or nature, known or unknown, suspected or unsuspected, disclosed or undisclosed, arising out of or in any way related to such disputes and/or our Services.
+
+# 6\. What are the fees for the Services? {#6.-what-are-the-fees-for-the-services?}
+
+1. The use of the Safe{Wallet} App, Third-Party Safe Apps or Third-Party Services may cause fees, including network fees, as indicated in the respective app. CC has no control over the fees charged by the Third-Party Safe Apps or Third Party Services. CC may change its own fees at any time. Price changes will be communicated to the User in due time before taking effect.
 
 1. The use of the Safe App or Third-Party Safe Apps may cause fees, including network fees, as indicated in the respective app. CC has no control over the fees charged by the Third-Party Services. CC may change its own fees at any time. Price changes will be communicated to the User in due time before taking effect.  
 2. The User is only entitled to offset and/or assert rights of retention if his counterclaims are legally established, undisputed or recognized by CC.
@@ -121,7 +227,49 @@ Our Services do not consist of:
 1. We may cease offering our Services and/or terminate the Agreement and refuse access to the Safe Apps at any time. The right of the parties to terminate the Agreement at any time for cause remains unaffected. In case of our termination of the Agreement, you may no longer access your Safe Account via our Services. However, you may continue to access your Safe Account and any Tokens via a third-party wallet provider using your Recovery Phrase and Private Keys.  
 2. We reserve the right to limit the use of the Safe Apps to a specified number of Users if necessary to protect or ensure the stability and integrity of the Services. We will only be able to limit access to the Services. At no time will we be able to limit or block access to or transfer your funds without your consent.
 
-### **14\. Can you terminate your Agreement with us?**
+# 11\. Are we responsible for the issuance of the Safe Token and any related functionalities or reward programs? {#11.-are-we-responsible-for-the-issuance-of-the-safe-token-and-any-related-functionalities-or-reward-programs?}
+
+1. The Safe Token is issued by the Safe Ecosystem Foundation. We are not the issuer or in any way responsible for the Safe Token. Furthermore, we do not provide any functionalities to the Safe Token or Safe Token reward programs.
+
+2. You are solely responsible for managing your Safe Tokens just like any other Token in your Safe Account and solely responsible for your eligibility for any reward programs.
+
+3. Any interface we provide that allows you to claim or delegate your Safe Tokens or to participate in any third party program related to Safe Tokens is provided free of charge and we exclude any and all liability for the correctness, completeness, speed or timeliness of these services. Furthermore we reserve the right to change the feature from time to time or cease to provide them without notice.
+
+# 12\. What is Cloud Storage and the Spaces feature? {#12.-what-is-cloud-storage-and-the-spaces-feature?}
+
+1. We offer an optional cloud storage service for user created metadata to improve user experience and data management called Spaces. By opting into this service, your metadata, which is by default stored in your browser's local storage, will instead be stored in our private database. The metadata may include, amongst other things:
+
+   1. Safe Accounts you created;
+
+   2. Counterfactual Safe Accounts you created;
+
+   3. Address book you created;
+
+   4. Safe names you attributed;
+
+   5. Signer names you attributed;
+
+   6. Watchlist you created (read-only Safe Accounts).
+
+2. The cloud storage also allows you to share your metadata with others by creating a shared set of metadata (“Spaces”), adding other users’ Wallet addresses to this Space, and them accepting. By creating or joining a Space, users acknowledge and agree to the following:
+
+* Users are solely responsible for verifying the identity of members they add to a Space. Users must not add others without their explicit consent. We do not verify or endorse Spacemembers or their actions.
+
+* Users must ensure that any metadata they add or share within aSpace complies with all applicable laws and regulations, including but not limited to data protection laws.
+
+* Users must not share or store metadata that is unlawful, fraudulent, misleading, or violates the rights of any third party. We do not assume any responsibility for any metadata shared within a Space.
+
+* We do not intend for users to process personal data via this feature. However, if a user chooses to process personal data within a Space , they are responsible for ensuring compliance with applicable data protection laws. In such cases, the user must inform us in advance and request a Data Processing Agreement (DPA). We reserve the right to refuse or impose conditions on such data processing.
+
+3. Any cloud storage of metadata we provide or offer within the Safe{Wallet} App is provided free of charge and liability is limited pursuant to Section 18 below. Furthermore we reserve the right to change the feature from time to time or cease to provide it with one week notice, prompting the deletion of your metadata from our database while retaining a copy in your local browser storage.
+
+# 13\. Can we terminate or limit your right to use our Services? {#13.-can-we-terminate-or-limit-your-right-to-use-our-services?}
+
+1. We may cease offering our Services and/or terminate the Agreement and refuse access to the Safe{Wallet} App at any time. The right of the parties to terminate the Agreement at any time for cause remains unaffected. In case of our termination of the Agreement, you may no longer access your Safe Account via our Services. However, you may continue to access your Safe Account and any Tokens via a third-party wallet provider using your Recovery Phrase and Private Keys.
+
+2. We reserve the right to limit the use of the Safe{Wallet} App to a specified number of Users if necessary to protect or ensure the stability and integrity of the Services. We will only be able to limit access to the Services. At no time will we be able to limit or block access to or transfer your funds without your consent.
+
+# 14\. Can you terminate your Agreement with us? {#14.-can-you-terminate-your-agreement-with-us?}
 
 You may terminate the Agreement at any time without notice.
 
@@ -232,5 +380,4 @@ Any dispute arising out of or in connection with this Agreement, including any q
 
 ### **31\. Is this all?**
 
-These Terms constitute the entire agreement between you and us in relation to the Agreement’s subject matter. It replaces and extinguishes any and all prior agreements, draft agreements, arrangements, warranties, statements, assurances, representations and undertakings of any nature made by, or on behalf of either of us, whether oral or written, public or private, in relation to that subject matter.
-
+These Terms constitute the entire agreement between you and us in relation to the Agreement’s subject matter. It replaces and extinguishes any and all prior agreements, draft agreements, arrangements, warranties, statements, assurances, representations and undertakings of any nature made by, or on behalf of either of us, whether oral or written, public or private, in relation to that subject matter.  

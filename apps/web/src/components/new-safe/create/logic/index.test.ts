@@ -15,16 +15,15 @@ import { toBeHex } from 'ethers'
 import {
   Gnosis_safe__factory,
   Proxy_factory__factory,
-} from '@/types/contracts/factories/@safe-global/safe-deployments/dist/assets/v1.3.0'
+} from '@safe-global/utils/types/contracts/factories/@safe-global/safe-deployments/dist/assets/v1.3.0'
 import {
   getReadOnlyFallbackHandlerContract,
   getReadOnlyGnosisSafeContract,
   getReadOnlyProxyFactoryContract,
 } from '@/services/contracts/safeContracts'
 import * as gateway from '@safe-global/safe-gateway-typescript-sdk'
-import { FEATURES, getLatestSafeVersion } from '@/utils/chains'
 import { chainBuilder } from '@/tests/builders/chains'
-import { type ReplayedSafeProps } from '@/store/slices'
+import { type ReplayedSafeProps } from '@safe-global/utils/features/counterfactual/store/types'
 import { faker } from '@faker-js/faker'
 import { ECOSYSTEM_ID_ADDRESS } from '@/config/constants'
 import {
@@ -34,17 +33,14 @@ import {
   getSafeSingletonDeployment,
   getSafeToL2SetupDeployment,
 } from '@safe-global/safe-deployments'
-import { Safe_to_l2_setup__factory } from '@/types/contracts'
+import { Safe_to_l2_setup__factory } from '@safe-global/utils/types/contracts'
+import { FEATURES, getLatestSafeVersion } from '@safe-global/utils/utils/chains'
 
 const provider = new JsonRpcProvider(undefined, { name: 'ethereum', chainId: 1 })
 
 const latestSafeVersion = getLatestSafeVersion(
   chainBuilder().with({ chainId: '1', recommendedMasterCopyVersion: '1.4.1' }).build(),
 )
-
-const safeToL2SetupDeployment = getSafeToL2SetupDeployment()
-const safeToL2SetupAddress = safeToL2SetupDeployment?.defaultAddress
-const safeToL2SetupInterface = Safe_to_l2_setup__factory.createInterface()
 
 describe('create/logic', () => {
   describe('createNewSafeViaRelayer', () => {
@@ -80,11 +76,9 @@ describe('create/logic', () => {
 
       const expectedSaltNonce = 69
       const expectedThreshold = 1
-      const proxyFactoryAddress = await (await getReadOnlyProxyFactoryContract(latestSafeVersion)).getAddress()
+      const proxyFactoryAddress = (await getReadOnlyProxyFactoryContract(latestSafeVersion)).getAddress()
       const readOnlyFallbackHandlerContract = await getReadOnlyFallbackHandlerContract(latestSafeVersion)
-      const safeContractAddress = await (
-        await getReadOnlyGnosisSafeContract(mockChainInfo, latestSafeVersion)
-      ).getAddress()
+      const safeContractAddress = (await getReadOnlyGnosisSafeContract(mockChainInfo, latestSafeVersion)).getAddress()
 
       const undeployedSafeProps: ReplayedSafeProps = {
         safeAccountConfig: {
@@ -92,7 +86,7 @@ describe('create/logic', () => {
           threshold: 1,
           data: EMPTY_DATA,
           to: ZERO_ADDRESS,
-          fallbackHandler: await readOnlyFallbackHandlerContract.getAddress(),
+          fallbackHandler: readOnlyFallbackHandlerContract.getAddress(),
           paymentReceiver: ZERO_ADDRESS,
           payment: 0,
           paymentToken: ZERO_ADDRESS,
@@ -108,7 +102,7 @@ describe('create/logic', () => {
         expectedThreshold,
         ZERO_ADDRESS,
         EMPTY_DATA,
-        await readOnlyFallbackHandlerContract.getAddress(),
+        readOnlyFallbackHandlerContract.getAddress(),
         ZERO_ADDRESS,
         0,
         ZERO_ADDRESS,
@@ -289,23 +283,24 @@ describe('create/logic', () => {
         owners: [faker.finance.ethereumAddress()],
         threshold: 1,
       }
+      const chainSetup = chainBuilder()
+        .with({ chainId: '137' })
+        // Multichain creation is toggled on
+        .with({ features: [FEATURES.COUNTERFACTUAL, FEATURES.MULTI_CHAIN_SAFE_CREATION] as any })
+        .with({ recommendedMasterCopyVersion: '1.4.1' })
+        .with({ l2: true })
+        .build()
+
       const safeL2SingletonDeployment = getSafeL2SingletonDeployment({
         version: '1.4.1',
         network: '137',
       })?.defaultAddress
-      expect(
-        createNewUndeployedSafeWithoutSalt(
-          '1.4.1',
-          safeSetup,
-          chainBuilder()
-            .with({ chainId: '137' })
-            // Multichain creation is toggled on
-            .with({ features: [FEATURES.COUNTERFACTUAL, FEATURES.MULTI_CHAIN_SAFE_CREATION] as any })
-            .with({ recommendedMasterCopyVersion: '1.4.1' })
-            .with({ l2: true })
-            .build(),
-        ),
-      ).toEqual({
+
+      const safeToL2SetupDeployment = getSafeToL2SetupDeployment({ version: '1.4.1', network: chainSetup.chainId })
+      const safeToL2SetupAddress = safeToL2SetupDeployment?.networkAddresses[chainSetup.chainId]
+      const safeToL2SetupInterface = Safe_to_l2_setup__factory.createInterface()
+
+      expect(createNewUndeployedSafeWithoutSalt('1.4.1', safeSetup, chainSetup)).toEqual({
         safeAccountConfig: {
           ...safeSetup,
           fallbackHandler: getFallbackHandlerDeployment({ version: '1.4.1', network: '137' })?.defaultAddress,

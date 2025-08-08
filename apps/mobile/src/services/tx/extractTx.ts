@@ -1,8 +1,7 @@
-import type { OperationType } from '@safe-global/safe-core-sdk-types'
-import { type SafeTransactionData } from '@safe-global/safe-core-sdk-types'
-import type { TransactionDetails } from '@safe-global/safe-gateway-typescript-sdk'
+import type { OperationType, SafeTransactionData } from '@safe-global/types-kit'
 import { Operation } from '@safe-global/safe-gateway-typescript-sdk'
 import { isMultisigDetailedExecutionInfo, isNativeTokenTransfer } from '@/src/utils/transaction-guards'
+import { TransactionDetails } from '@safe-global/store/gateway/AUTO_GENERATED/transactions'
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 const EMPTY_DATA = '0x'
@@ -61,10 +60,16 @@ const extractTxInfo = (
         return txDetails.txData?.value ?? '0'
       case 'SwapOrder':
         return txDetails.txData?.value ?? '0'
+      case 'SwapAndBridge':
+      case 'Swap':
+        return txDetails.txData?.value ?? '0'
       case 'NativeStakingDeposit':
       case 'NativeStakingValidatorsExit':
       case 'NativeStakingWithdraw':
         return txDetails.txData?.value ?? '0'
+      case 'VaultDeposit':
+      case 'VaultRedeem':
+        return txDetails.txInfo?.value ?? '0'
       case 'Custom':
         return txDetails.txInfo.value
       case 'Creation':
@@ -77,7 +82,8 @@ const extractTxInfo = (
   })()
 
   const to = (() => {
-    switch (txDetails.txInfo.type) {
+    const type = txDetails.txInfo.type
+    switch (type) {
       case 'Transfer':
         if (isNativeTokenTransfer(txDetails.txInfo.transferInfo)) {
           return txDetails.txInfo.recipient.value
@@ -86,9 +92,13 @@ const extractTxInfo = (
         }
       case 'SwapOrder':
       case 'TwapOrder':
+      case 'SwapAndBridge':
+      case 'Swap':
       case 'NativeStakingDeposit':
       case 'NativeStakingValidatorsExit':
-      case 'NativeStakingWithdraw': {
+      case 'NativeStakingWithdraw':
+      case 'VaultDeposit':
+      case 'VaultRedeem': {
         const toValue = txDetails.txData?.to.value
         if (!toValue) {
           throw new Error('Tx data does not have a `to` field')
@@ -101,7 +111,8 @@ const extractTxInfo = (
       case 'SettingsChange':
         return safeAddress
       default: {
-        throw new Error(`Unknown transaction type: ${txDetails.txInfo.type}`)
+        // This should never happen as we've handled all possible cases
+        throw new Error(`Unexpected transaction type: ${type}`)
       }
     }
   })()
@@ -117,7 +128,7 @@ const extractTxInfo = (
       gasToken,
       nonce,
       refundReceiver,
-      value,
+      value: value ?? '0',
       to,
       operation,
     },

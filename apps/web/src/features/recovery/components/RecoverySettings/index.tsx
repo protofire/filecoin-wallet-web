@@ -11,11 +11,11 @@ import EthHashInfo from '@/components/common/EthHashInfo'
 import EnhancedTable from '@/components/common/EnhancedTable'
 import InfoIcon from '@/public/images/notifications/info.svg'
 import CheckWallet from '@/components/common/CheckWallet'
-import { getPeriod } from '@/utils/date'
-import { HelpCenterArticle, HelperCenterArticleTitles } from '@/config/constants'
+import { getPeriod } from '@safe-global/utils/utils/date'
 import { TOOLTIP_TITLES } from '@/components/tx-flow/common/constants'
 
 import tableCss from '@/components/common/EnhancedTable/styles.module.css'
+import { HelpCenterArticle, HelperCenterArticleTitles } from '@safe-global/utils/config/constants'
 
 enum HeadCells {
   Recoverer = 'recoverer',

@@ -4,9 +4,9 @@ import {
   getNonces as fetchNonces,
   type SafeTransactionEstimation,
 } from '@safe-global/safe-gateway-typescript-sdk'
-import type { MetaTransactionData, SafeTransactionDataPartial } from '@safe-global/safe-core-sdk-types'
-import { isLegacyVersion } from '@/hooks/coreSDK/safeCoreSDK'
+import type { MetaTransactionData, SafeTransactionDataPartial } from '@safe-global/types-kit'
 import { Errors, logError } from '@/services/exceptions'
+import { isLegacyVersion } from '@safe-global/utils/services/contracts/utils'
 
 const fetchRecommendedParams = async (
   chainId: string,
