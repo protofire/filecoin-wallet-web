@@ -1,0 +1,33 @@
+diff --git a/dist/assets/allowance-module/v0.1.0/allowance-module.json b/dist/assets/allowance-module/v0.1.0/allowance-module.json
+index a4fe2e54016c024afb0f83648b1a68712659c94f..508c6df6a3e3f4fc24b994c1cd01191bcb9f71d9 100644
+--- a/dist/assets/allowance-module/v0.1.0/allowance-module.json
++++ b/dist/assets/allowance-module/v0.1.0/allowance-module.json
+@@ -11,11 +11,13 @@
+         "100": "0xCFbFaC74C26F8647cBDb8c5caf80BB5b32E43134",
+         "137": "0x1Fb403834C911eB98d56E74F5182b0d64C3b3b4D",
+         "246": "0xCFbFaC74C26F8647cBDb8c5caf80BB5b32E43134",
++        "314": "0xE46FE78DBfCa5E835667Ba9dCd3F3315E7623F8a",
+         "8453": "0xCFbFaC74C26F8647cBDb8c5caf80BB5b32E43134",
+         "42220": "0xCFbFaC74C26F8647cBDb8c5caf80BB5b32E43134",
+         "43114": "0x1Fb403834C911eB98d56E74F5182b0d64C3b3b4D",
+         "73799": "0xCFbFaC74C26F8647cBDb8c5caf80BB5b32E43134",
+         "80094": "0xCFbFaC74C26F8647cBDb8c5caf80BB5b32E43134",
++        "314159": "0xE46FE78DBfCa5E835667Ba9dCd3F3315E7623F8a",
+         "11155111": "0xCFbFaC74C26F8647cBDb8c5caf80BB5b32E43134"
+     },
+     "abi": [
+diff --git a/dist/assets/allowance-module/v0.1.1/allowance-module.json b/dist/assets/allowance-module/v0.1.1/allowance-module.json
+index 1d0b1d6e973183621204b22f370151094f2e2b8c..2ea88aa96dbf9e5dacf0824e2f6e2e7564b1822a 100644
+--- a/dist/assets/allowance-module/v0.1.1/allowance-module.json
++++ b/dist/assets/allowance-module/v0.1.1/allowance-module.json
+@@ -5,7 +5,9 @@
+     "networkAddresses": {
+         "100": "0xAA46724893dedD72658219405185Fb0Fc91e091C",
+         "130": "0xAA46724893dedD72658219405185Fb0Fc91e091C",
+-        "137": "0xAA46724893dedD72658219405185Fb0Fc91e091C"
++        "137": "0xAA46724893dedD72658219405185Fb0Fc91e091C",
++        "314": "0xAA46724893dedD72658219405185Fb0Fc91e091C",
++        "314159": "0xAA46724893dedD72658219405185Fb0Fc91e091C"
+     },
+     "abi": [
+         {
