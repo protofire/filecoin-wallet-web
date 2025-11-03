@@ -1,3 +1,33 @@
+import NETWORK_CONFIG from '@/config/templateConfig'
+import NETWORK_PALETTE from '@/config/templateLightPalette'
+
+const licensedLightPalette = {
+  secondary: {
+    dark: '#0FDA6D',
+    main: '#5FDDFF',
+    light: '#C0FFFB',
+    background: '#C0FFFB',
+  },
+  success: {
+    dark: '#028D4C',
+    main: '#00B460',
+    light: '#72F5B8',
+    background: '#EFFAF1',
+  },
+  info: {
+    dark: '#52BFDC',
+    main: '#5FDDFF',
+    light: '#B7F0FF',
+    background: '#EFFCFF',
+  },
+  background: {
+    default: '#F4F4F4',
+    main: '#F4F4F4',
+    paper: '#FFFFFF',
+    light: '#C0FFFB',
+  },
+}
+
 const lightPalette = {
   text: {
     primary: '#121312',
@@ -64,4 +94,13 @@ const lightPalette = {
   },
 }
 
-export default lightPalette
+const override = {
+  ...lightPalette,
+  ...(Object.keys(NETWORK_PALETTE).length !== 0
+    ? NETWORK_PALETTE
+    : NETWORK_CONFIG.IS_LICENSED
+      ? licensedLightPalette
+      : {}),
+}
+
+export default override
