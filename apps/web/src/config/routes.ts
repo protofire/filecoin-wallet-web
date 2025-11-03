@@ -4,7 +4,7 @@ export const AppRoutes = {
   wc: '/wc',
   userSettings: '/user-settings',
   terms: '/terms',
-  swap: '/lifi-swap',
+  swap: '/swap',
   stake: '/stake',
   privacy: '/privacy',
   licenses: '/licenses',
