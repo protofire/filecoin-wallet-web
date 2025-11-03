@@ -4,6 +4,7 @@ export const badgeTheme = {
   light_badge_success: {
     background: tokens.color.successLightDark,
     color: tokens.color.backgroundMainDark,
+    success: tokens.color.successMainLight,
   },
   dark_badge_success: {
     color: tokens.color.backgroundMainDark,
@@ -67,5 +68,13 @@ export const badgeTheme = {
   dark_badge_background_inverted: {
     color: tokens.color.logoBackgroundDark,
     background: tokens.color.textPrimaryDark,
+  },
+  light_badge_outline: {
+    background: 'transparent',
+    borderColor: tokens.color.borderLightLight,
+  },
+  dark_badge_outline: {
+    background: 'transparent',
+    borderColor: tokens.color.borderLightDark,
   },
 }

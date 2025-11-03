@@ -2,20 +2,30 @@ import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react-native'
 import { useLocalSearchParams } from 'expo-router'
 import { SignTransaction } from './SignTransaction'
-import { useSigningGuard } from './hooks/useSigningGuard'
-import { useTransactionSigning } from './hooks/useTransactionSigning'
+import { useTransactionGuard } from '@/src/hooks/useTransactionGuard'
+import { SigningStatus, useTransactionSigning } from './hooks/useTransactionSigning'
 
 // Mock the hooks
 jest.mock('expo-router', () => ({
   useLocalSearchParams: jest.fn(),
 }))
 
-jest.mock('./hooks/useSigningGuard', () => ({
-  useSigningGuard: jest.fn(),
+jest.mock('@/src/hooks/useTransactionGuard', () => ({
+  useTransactionGuard: jest.fn(),
 }))
 
 jest.mock('./hooks/useTransactionSigning', () => ({
+  ...jest.requireActual('./hooks/useTransactionSigning'),
   useTransactionSigning: jest.fn(),
+}))
+
+// Mock Redux hooks
+jest.mock('@/src/store/hooks', () => ({
+  useAppSelector: jest.fn(),
+}))
+
+jest.mock('@/src/store/hooks/activeSafe', () => ({
+  useDefinedActiveSafe: jest.fn(),
 }))
 
 // Mock the child components using string components instead of React Native components
@@ -53,12 +63,28 @@ jest.mock('@/src/components/LoadingScreen', () => ({
 }))
 
 const mockUseLocalSearchParams = useLocalSearchParams as jest.MockedFunction<typeof useLocalSearchParams>
-const mockUseSigningGuard = useSigningGuard as jest.MockedFunction<typeof useSigningGuard>
+const mockUseTransactionGuard = useTransactionGuard as jest.MockedFunction<typeof useTransactionGuard>
 const mockUseTransactionSigning = useTransactionSigning as jest.MockedFunction<typeof useTransactionSigning>
+
+// Get the mocked Redux hooks
+const { useAppSelector } = require('@/src/store/hooks')
+const { useDefinedActiveSafe } = require('@/src/store/hooks/activeSafe')
+const mockUseAppSelector = useAppSelector as jest.MockedFunction<typeof useAppSelector>
+const mockUseDefinedActiveSafe = useDefinedActiveSafe as jest.MockedFunction<typeof useDefinedActiveSafe>
 
 describe('SignTransaction', () => {
   const mockExecuteSign = jest.fn()
   const mockRetry = jest.fn()
+  const mockActiveSafe = {
+    address: '0x123',
+    chainId: '1',
+    threshold: 2,
+    owners: ['0x456', '0x789'],
+  }
+  const mockActiveSigner = {
+    value: '0x456',
+    type: 'EOA' as const,
+  }
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -66,15 +92,17 @@ describe('SignTransaction', () => {
     // Default mocks
     mockUseLocalSearchParams.mockReturnValue({
       txId: 'test-tx-id',
-      signerAddress: '0x456',
     })
 
-    mockUseSigningGuard.mockReturnValue({
-      canSign: true,
+    mockUseDefinedActiveSafe.mockReturnValue(mockActiveSafe)
+    mockUseAppSelector.mockReturnValue(mockActiveSigner)
+
+    mockUseTransactionGuard.mockReturnValue({
+      guard: true,
     })
 
     mockUseTransactionSigning.mockReturnValue({
-      status: 'idle',
+      status: SigningStatus.IDLE,
       executeSign: mockExecuteSign,
       retry: mockRetry,
       reset: jest.fn(),
@@ -87,46 +115,43 @@ describe('SignTransaction', () => {
 
   describe('parameter validation', () => {
     it('should render error when txId is missing', () => {
-      mockUseLocalSearchParams.mockReturnValue({
-        txId: '',
-        signerAddress: '0x456',
-      })
-
-      render(<SignTransaction />)
-
-      expect(screen.getByTestId('sign-error')).toBeOnTheScreen()
-      expect(screen.getByTestId('error-description')).toHaveTextContent('Missing transaction ID or signer address')
-    })
-
-    it('should render error when signerAddress is missing', () => {
-      mockUseLocalSearchParams.mockReturnValue({
-        txId: 'test-tx-id',
-        signerAddress: '',
-      })
-
-      render(<SignTransaction />)
-
-      expect(screen.getByTestId('sign-error')).toBeOnTheScreen()
-      expect(screen.getByTestId('error-description')).toHaveTextContent('Missing transaction ID or signer address')
-    })
-
-    it('should render error when both parameters are missing', () => {
       mockUseLocalSearchParams.mockReturnValue({})
 
       render(<SignTransaction />)
 
       expect(screen.getByTestId('sign-error')).toBeOnTheScreen()
+      expect(screen.getByTestId('error-description')).toHaveTextContent('Missing transaction ID')
+    })
+
+    it('should render error when active signer is missing', () => {
+      mockUseAppSelector.mockReturnValue(null)
+
+      render(<SignTransaction />)
+
+      expect(screen.getByTestId('sign-error')).toBeOnTheScreen()
+      expect(screen.getByTestId('error-description')).toHaveTextContent('No signer selected')
+    })
+
+    it('should render error when txId is empty string', () => {
+      mockUseLocalSearchParams.mockReturnValue({
+        txId: '',
+      })
+
+      render(<SignTransaction />)
+
+      expect(screen.getByTestId('sign-error')).toBeOnTheScreen()
+      expect(screen.getByTestId('error-description')).toHaveTextContent('Missing transaction ID')
     })
   })
 
   describe('auto-signing logic', () => {
     it('should call executeSign when user can sign and status is idle', async () => {
-      mockUseSigningGuard.mockReturnValue({
-        canSign: true,
+      mockUseTransactionGuard.mockReturnValue({
+        guard: true,
       })
 
       mockUseTransactionSigning.mockReturnValue({
-        status: 'idle',
+        status: SigningStatus.IDLE,
         executeSign: mockExecuteSign,
         retry: mockRetry,
         reset: jest.fn(),
@@ -144,8 +169,8 @@ describe('SignTransaction', () => {
     })
 
     it('should not call executeSign when user cannot sign', () => {
-      mockUseSigningGuard.mockReturnValue({
-        canSign: false,
+      mockUseTransactionGuard.mockReturnValue({
+        guard: false,
       })
 
       render(<SignTransaction />)
@@ -155,7 +180,7 @@ describe('SignTransaction', () => {
 
     it('should not call executeSign when status is not idle', () => {
       mockUseTransactionSigning.mockReturnValue({
-        status: 'loading',
+        status: SigningStatus.LOADING,
         executeSign: mockExecuteSign,
         retry: mockRetry,
         reset: jest.fn(),
@@ -169,12 +194,28 @@ describe('SignTransaction', () => {
 
       expect(mockExecuteSign).not.toHaveBeenCalled()
     })
+
+    it('should not call executeSign when txId is missing', () => {
+      mockUseLocalSearchParams.mockReturnValue({})
+
+      render(<SignTransaction />)
+
+      expect(mockExecuteSign).not.toHaveBeenCalled()
+    })
+
+    it('should not call executeSign when activeSigner is missing', () => {
+      mockUseAppSelector.mockReturnValue(null)
+
+      render(<SignTransaction />)
+
+      expect(mockExecuteSign).not.toHaveBeenCalled()
+    })
   })
 
   describe('error handling', () => {
     it('should render SignError for API errors', () => {
       mockUseTransactionSigning.mockReturnValue({
-        status: 'idle',
+        status: SigningStatus.IDLE,
         executeSign: mockExecuteSign,
         retry: mockRetry,
         reset: jest.fn(),
@@ -192,7 +233,7 @@ describe('SignTransaction', () => {
 
     it('should render SignError for signing errors', () => {
       mockUseTransactionSigning.mockReturnValue({
-        status: 'error',
+        status: SigningStatus.ERROR,
         executeSign: mockExecuteSign,
         retry: mockRetry,
         reset: jest.fn(),
@@ -210,7 +251,7 @@ describe('SignTransaction', () => {
 
     it('should call retry when retry button is pressed', () => {
       mockUseTransactionSigning.mockReturnValue({
-        status: 'error',
+        status: SigningStatus.ERROR,
         executeSign: mockExecuteSign,
         retry: mockRetry,
         reset: jest.fn(),
@@ -232,7 +273,7 @@ describe('SignTransaction', () => {
   describe('success state', () => {
     it('should render SignSuccess when signing is successful', () => {
       mockUseTransactionSigning.mockReturnValue({
-        status: 'success',
+        status: SigningStatus.SUCCESS,
         executeSign: mockExecuteSign,
         retry: mockRetry,
         reset: jest.fn(),
@@ -252,7 +293,7 @@ describe('SignTransaction', () => {
   describe('loading states', () => {
     it('should render LoadingScreen when signing is in progress', () => {
       mockUseTransactionSigning.mockReturnValue({
-        status: 'loading',
+        status: SigningStatus.LOADING,
         executeSign: mockExecuteSign,
         retry: mockRetry,
         reset: jest.fn(),
@@ -271,7 +312,7 @@ describe('SignTransaction', () => {
 
     it('should render LoadingScreen when API is loading', () => {
       mockUseTransactionSigning.mockReturnValue({
-        status: 'idle',
+        status: SigningStatus.IDLE,
         executeSign: mockExecuteSign,
         retry: mockRetry,
         reset: jest.fn(),
@@ -288,12 +329,12 @@ describe('SignTransaction', () => {
     })
 
     it('should render preparation loading screen for idle authorized state', () => {
-      mockUseSigningGuard.mockReturnValue({
-        canSign: true,
+      mockUseTransactionGuard.mockReturnValue({
+        guard: true,
       })
 
       mockUseTransactionSigning.mockReturnValue({
-        status: 'idle',
+        status: SigningStatus.IDLE,
         executeSign: mockExecuteSign,
         retry: mockRetry,
         reset: jest.fn(),
@@ -321,10 +362,25 @@ describe('SignTransaction', () => {
       })
     })
 
-    it('should call useSigningGuard with no parameters', () => {
+    it('should call useTransactionGuard with signing parameter', () => {
       render(<SignTransaction />)
 
-      expect(mockUseSigningGuard).toHaveBeenCalledWith()
+      expect(mockUseTransactionGuard).toHaveBeenCalledWith('signing')
+    })
+
+    it('should call useDefinedActiveSafe with no parameters', () => {
+      render(<SignTransaction />)
+
+      expect(mockUseDefinedActiveSafe).toHaveBeenCalledWith()
+    })
+
+    it('should call useAppSelector with selectActiveSigner', () => {
+      render(<SignTransaction />)
+
+      expect(mockUseAppSelector).toHaveBeenCalled()
+      // The selector function is called with state and safe address
+      const selectorCall = mockUseAppSelector.mock.calls[0][0]
+      expect(typeof selectorCall).toBe('function')
     })
   })
 })

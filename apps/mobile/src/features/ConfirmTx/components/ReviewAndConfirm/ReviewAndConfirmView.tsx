@@ -1,21 +1,19 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import { useTheme, View } from 'tamagui'
 import { Tabs, MaterialTabBar } from 'react-native-collapsible-tab-view'
 import { TransactionDetails } from '@safe-global/store/gateway/AUTO_GENERATED/transactions'
 import { ReviewHeader } from './ReviewHeader'
-import { ReviewFooter } from './ReviewFooter'
 import { DataTab } from './tabs/DataTab'
 import { JSONTab } from './tabs/JSONTab'
-import { Address } from '@/src/types/address'
 import { useTheme as useCurrentTheme } from '@/src/theme/hooks/useTheme'
 
 interface ReviewAndConfirmViewProps {
   txDetails: TransactionDetails
-  signerAddress: Address
+  children: ReactNode
 }
 
-export function ReviewAndConfirmView({ txDetails, signerAddress }: ReviewAndConfirmViewProps) {
-  const { currentTheme } = useCurrentTheme()
+export function ReviewAndConfirmView({ txDetails, children }: ReviewAndConfirmViewProps) {
+  const { isDark } = useCurrentTheme()
   const theme = useTheme()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const renderTabBar = (props: any) => (
@@ -24,7 +22,7 @@ export function ReviewAndConfirmView({ txDetails, signerAddress }: ReviewAndConf
       indicatorStyle={{
         backgroundColor: theme.color.get(),
       }}
-      style={{ backgroundColor: currentTheme === 'light' ? theme.backgroundPaper.get() : theme.background.get() }}
+      style={{ backgroundColor: isDark ? theme.background.get() : theme.backgroundPaper.get() }}
       labelStyle={{ color: theme.color.get(), fontSize: 16, fontWeight: '600' }}
       activeColor={theme.color.get()}
       inactiveColor={theme.colorSecondary.get()}
@@ -53,7 +51,7 @@ export function ReviewAndConfirmView({ txDetails, signerAddress }: ReviewAndConf
         </Tabs.Tab>
       </Tabs.Container>
 
-      <ReviewFooter signerAddress={signerAddress} txId={txDetails.txId} />
+      {children}
     </View>
   )
 }

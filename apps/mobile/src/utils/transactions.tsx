@@ -1,4 +1,3 @@
-import { GroupedTxs } from '@/src/features/TxHistory/utils'
 import {
   isTransferTxInfo,
   isAddSignerTxInfo,
@@ -15,6 +14,7 @@ import {
   isCancellationTxInfo,
   isBridgeOrderTxInfo,
   isLifiSwapTxInfo,
+  isChangeThresholdTxInfo,
 } from '@/src/utils/transaction-guards'
 import { Transaction } from '@safe-global/store/gateway/AUTO_GENERATED/transactions'
 import { ETxType } from '../types/txType'
@@ -34,6 +34,10 @@ export const getTransactionType = ({ txInfo }: { txInfo: Transaction['txInfo'] }
 
   if (isRemoveSignerTxInfo(txInfo)) {
     return ETxType.REMOVE_SIGNER
+  }
+
+  if (isChangeThresholdTxInfo(txInfo)) {
+    return ETxType.CHANGE_THRESHOLD
   }
 
   if (isCancellationTxInfo(txInfo)) {
@@ -78,6 +82,8 @@ export const getTransactionType = ({ txInfo }: { txInfo: Transaction['txInfo'] }
 
   return null
 }
+
+export type GroupedTxs<T> = (T | T[])[]
 
 export const groupBulkTxs = <T extends { type: string; transaction?: Transaction }>(
   list: GroupedTxs<T>,
