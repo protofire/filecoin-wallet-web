@@ -7,12 +7,27 @@ import footerCss from './welcomeFooter.module.css'
 import Footer from '../common/Footer'
 import TEMPLATE_CONFIG from '@/config/templateConfig'
 
+const welcomeLogoStyle = (): React.CSSProperties => {
+  const { W, H } = TEMPLATE_CONFIG.LOGO_DIMENSIONS?.WELCOME ?? {}
+  if (!W && !H) {
+    return {}
+  }
+  const style: React.CSSProperties = { width: 'auto', display: 'block' }
+  if (W && H) {
+    return { ...style, maxWidth: W, maxHeight: H, height: 'auto' }
+  }
+  if (H) {
+    return { ...style, height: H }
+  }
+  return { ...style, maxWidth: W, height: 'auto' }
+}
+
 const NewSafe = () => {
   return (
     <div className={css.loginPage}>
       <div className={css.leftSide}>
         <div className={css.logoContainer}>
-          <SafeLogo className={css.logo} />
+          <SafeLogo className={css.logo} style={welcomeLogoStyle()} />
         </div>
         <div className={css.loginContainer}>
           <WelcomeLogin />
