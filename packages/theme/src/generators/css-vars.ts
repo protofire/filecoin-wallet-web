@@ -8,6 +8,41 @@ import lightPalette from '../palettes/light'
 import darkPalette from '../palettes/dark'
 import { spacingWeb } from '../tokens'
 
+export interface GenerateCSSVarsOptions {
+  lightPaletteOverride?: Partial<ColorPalette>
+  darkPaletteOverride?: Partial<ColorPalette>
+}
+
+const mergeColorPalette = (base: ColorPalette, override?: Partial<ColorPalette>): ColorPalette => {
+  if (!override || Object.keys(override).length === 0) {
+    return base
+  }
+
+  const out: Record<string, unknown> = { ...base }
+
+  ;(Object.keys(override) as (keyof ColorPalette)[]).forEach((key) => {
+    const value = override[key]
+    if (value === undefined) {
+      return
+    }
+
+    const baseValue = base[key]
+    if (
+      typeof baseValue === 'object' &&
+      baseValue !== null &&
+      typeof value === 'object' &&
+      value !== null &&
+      !Array.isArray(value)
+    ) {
+      out[key as string] = { ...(baseValue as Record<string, unknown>), ...(value as Record<string, unknown>) }
+    } else {
+      out[key as string] = value
+    }
+  })
+
+  return out as unknown as ColorPalette
+}
+
 /**
  * Convert camelCase to kebab-case.
  * Example: 'textSecondary' => 'text-secondary'
@@ -57,12 +92,15 @@ function generateSpacingCSS(indent = '  '): string[] {
  * Generate complete CSS variables file content.
  * Includes light mode (default), dark mode override, and media query fallback.
  */
-export function generateCSSVars(): string {
+export function generateCSSVars(options: GenerateCSSVarsOptions = {}): string {
+  const mergedLight = mergeColorPalette(lightPalette, options.lightPaletteOverride)
+  const mergedDark = mergeColorPalette(darkPalette, options.darkPaletteOverride)
+
   // For web, restore original colors that differ from mobile's unified palette
   const webLightPalette: ColorPalette = {
-    ...lightPalette,
+    ...mergedLight,
     background: {
-      ...lightPalette.background,
+      ...mergedLight.background,
       paper: '#FFFFFF',
       default: '#F4F4F4',
     },
@@ -93,7 +131,7 @@ export function generateCSSVars(): string {
   }
 
   const webDarkPalette: ColorPalette = {
-    ...darkPalette,
+    ...mergedDark,
     error: {
       dark: '#AC2C3B',
       main: '#FF5F72',

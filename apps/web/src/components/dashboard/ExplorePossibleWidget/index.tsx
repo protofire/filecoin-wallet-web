@@ -12,6 +12,7 @@ import { EXPLORE_POSSIBLE_EVENTS } from '@/services/analytics/events/overview'
 import { MixpanelEvent, MixpanelEventParams } from '@/services/analytics/mixpanel-events'
 import { useDarkMode } from '@/hooks/useDarkMode'
 import { useHasFeature } from '@/hooks/useChains'
+import { useIsOfficialHost } from '@/hooks/useIsOfficialHost'
 import { FEATURES } from '@safe-global/utils/utils/chains'
 import { EURCV_ASSET_ID } from '@/config/eurcv'
 import css from './styles.module.css'
@@ -59,7 +60,7 @@ const EXPLORE_POSSIBLE_CONFIG = [
       light: '/images/explore-possible/spaces-large.svg',
       dark: '/images/explore-possible/spaces-large-dark.svg',
     },
-    getLink: () => 'https://app.safe.global/welcome/spaces',
+    getLink: () => `${typeof window !== 'undefined' ? window.location.origin : ''}/welcome/spaces`,
   },
   {
     id: 'transaction-builder',
@@ -92,6 +93,8 @@ const ExplorePossibleWidget = () => {
   const router = useRouter()
   const txBuilderApp = useTxBuilderApp()
   const isDarkMode = useDarkMode()
+  const isOfficialHost = useIsOfficialHost()
+  const isSpacesEnabled = useHasFeature(FEATURES.SPACES)
   const isSwapEnabled = useHasFeature(FEATURES.NATIVE_SWAPS)
   const isEurcvBoostEnabled = useHasFeature(FEATURES.EURCV_BOOST)
 
@@ -110,6 +113,10 @@ const ExplorePossibleWidget = () => {
         if (config.id === 'earn' && isEurcvBoostEnabled !== true) {
           return false
         }
+        // Filter out spaces (Manage multiple Safes) on forks or when chain has no Spaces feature
+        if (config.id === 'spaces' && (!isOfficialHost || isSpacesEnabled !== true)) {
+          return false
+        }
         return true
       }).map((config) => ({
         id: config.id,
@@ -119,7 +126,7 @@ const ExplorePossibleWidget = () => {
         iconUrl: isDarkMode ? config.iconUrl.dark : config.iconUrl.light,
         link: config.getLink(router.query.safe, txBuilderApp.link),
       })),
-    [router.query.safe, txBuilderApp, isDarkMode, isSwapEnabled, isEurcvBoostEnabled],
+    [router.query.safe, txBuilderApp, isDarkMode, isOfficialHost, isSpacesEnabled, isSwapEnabled, isEurcvBoostEnabled],
   )
 
   const updateScrollState = () => {

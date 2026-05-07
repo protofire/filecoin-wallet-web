@@ -21,6 +21,7 @@ import WarningMessage from './WarningMessage'
 import IntroText from './IntroText'
 import CookieOptionsList from './CookieOptionsList'
 import CookieBannerActions from './CookieBannerActions'
+import { useIsOfficialHost } from '@/hooks/useIsOfficialHost'
 
 export const CookieAndTermBanner = ({
   warningKey,
@@ -29,7 +30,11 @@ export const CookieAndTermBanner = ({
   warningKey?: CookieAndTermType
   inverted?: boolean
 }): ReactElement => {
-  const warning = warningKey ? COOKIE_AND_TERM_WARNING[warningKey] : undefined
+  const isOfficialHost = useIsOfficialHost()
+  const warning =
+    warningKey && (isOfficialHost || warningKey !== CookieAndTermType.UPDATES)
+      ? COOKIE_AND_TERM_WARNING[warningKey]
+      : undefined
   const dispatch = useAppDispatch()
   const cookies = useAppSelector(selectCookies)
 
@@ -37,8 +42,8 @@ export const CookieAndTermBanner = ({
     defaultValues: {
       [CookieAndTermType.TERMS]: true,
       [CookieAndTermType.NECESSARY]: true,
-      [CookieAndTermType.UPDATES]: cookies[CookieAndTermType.UPDATES] ?? false,
-      [CookieAndTermType.ANALYTICS]: cookies[CookieAndTermType.ANALYTICS] ?? false,
+      [CookieAndTermType.UPDATES]: isOfficialHost ? (cookies[CookieAndTermType.UPDATES] ?? false) : false,
+      [CookieAndTermType.ANALYTICS]: isOfficialHost ? (cookies[CookieAndTermType.ANALYTICS] ?? false) : false,
       ...(warningKey ? { [warningKey]: true } : {}),
     },
   })
@@ -55,6 +60,7 @@ export const CookieAndTermBanner = ({
   }
 
   const handleAcceptAll = () => {
+    if (!isOfficialHost) return
     setValue(CookieAndTermType.UPDATES, true)
     setValue(CookieAndTermType.ANALYTICS, true)
     setTimeout(handleAccept, 300)
