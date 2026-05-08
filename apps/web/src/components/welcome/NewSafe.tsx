@@ -9,17 +9,17 @@ import TEMPLATE_CONFIG from '@/config/templateConfig'
 
 const welcomeLogoStyle = (): React.CSSProperties => {
   const { W, H } = TEMPLATE_CONFIG.LOGO_DIMENSIONS?.WELCOME ?? {}
+  const base: React.CSSProperties = { display: 'block' }
+  if (W && H) {
+    return { ...base, width: W, height: H }
+  }
   if (!W && !H) {
     return {}
   }
-  const style: React.CSSProperties = { width: 'auto', display: 'block' }
-  if (W && H) {
-    return { ...style, maxWidth: W, maxHeight: H, height: 'auto' }
-  }
   if (H) {
-    return { ...style, height: H }
+    return { ...base, width: 'auto', height: H }
   }
-  return { ...style, maxWidth: W, height: 'auto' }
+  return { ...base, maxWidth: W, height: 'auto' }
 }
 
 const NewSafe = () => {
