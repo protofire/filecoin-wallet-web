@@ -13,7 +13,7 @@ const TEMPLATE_CONFIG = {
     },
     WELCOME: {
       W: '200px',
-      H: '80px',
+      H: '48px',
     },
   },
   EXTRA_FOOTER_LINKS: [
