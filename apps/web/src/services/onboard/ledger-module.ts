@@ -13,6 +13,8 @@ import type { Subscription } from 'rxjs'
 
 const LEDGER_LIVE_PATH: DerivationPath = "44'/60'"
 const LEDGER_LEGACY_PATH: DerivationPath = "44'/60'/0'"
+// Filecoin derivation path — coin type 461 per SLIP44; covers both mainnet (314) and Calibration (314159)
+const FILECOIN_PATH = "44'/461'/0'/0" as DerivationPath
 
 const DEFAULT_BASE_PATHS: Array<BasePath> = [
   {
@@ -23,6 +25,10 @@ const DEFAULT_BASE_PATHS: Array<BasePath> = [
     label: 'Ledger Legacy',
     value: LEDGER_LEGACY_PATH,
   },
+  {
+    label: 'Filecoin',
+    value: FILECOIN_PATH,
+  },
 ]
 
 const DEFAULT_ASSETS: Array<Asset> = [
@@ -30,6 +36,10 @@ const DEFAULT_ASSETS: Array<Asset> = [
     label: 'ETH',
   },
 ]
+
+function isFilecoinPath(derivationPath: string): boolean {
+  return derivationPath.includes("44'/461'")
+}
 
 export function ledgerModule(): WalletInit {
   return () => {
@@ -278,7 +288,11 @@ export function ledgerModule(): WalletInit {
           const provider = new JsonRpcProvider(currentChain.rpcUrl)
 
           // Only return exact account from custom derivation
-          if (args.derivationPath !== LEDGER_LIVE_PATH && args.derivationPath !== LEDGER_LEGACY_PATH) {
+          if (
+            args.derivationPath !== LEDGER_LIVE_PATH &&
+            args.derivationPath !== LEDGER_LEGACY_PATH &&
+            args.derivationPath !== FILECOIN_PATH
+          ) {
             const account = await deriveAccount({ ...args, provider })
             return [account]
           }
@@ -361,16 +375,20 @@ async function getLedgerSdk() {
       return dmk.disconnect({ sessionId })
     },
     getAddress: async (derivationPath: string): Promise<GetAddressDAOutput> => {
-      return waitForAction(signer.getAddress(derivationPath, { checkOnDevice: false }))
+      const skipOpenApp = isFilecoinPath(derivationPath)
+      return waitForAction(signer.getAddress(derivationPath, { checkOnDevice: false, skipOpenApp }))
     },
     signMessage: async (derivationPath: string, message: string | Uint8Array): Promise<SignPersonalMessageDAOutput> => {
-      return waitForAction(signer.signMessage(derivationPath, message))
+      const skipOpenApp = isFilecoinPath(derivationPath)
+      return waitForAction(signer.signMessage(derivationPath, message, { skipOpenApp }))
     },
     signTransaction: async (derivationPath: string, transaction: Uint8Array): Promise<SignTransactionDAOutput> => {
-      return waitForAction(signer.signTransaction(derivationPath, transaction))
+      const skipOpenApp = isFilecoinPath(derivationPath)
+      return waitForAction(signer.signTransaction(derivationPath, transaction, { skipOpenApp }))
     },
     signTypedData: async (derivationPath: string, typedData: TypedData): Promise<SignTypedDataDAOutput> => {
-      return waitForAction(signer.signTypedData(derivationPath, typedData))
+      const skipOpenApp = isFilecoinPath(derivationPath)
+      return waitForAction(signer.signTypedData(derivationPath, typedData, { skipOpenApp }))
     },
   }
 }
