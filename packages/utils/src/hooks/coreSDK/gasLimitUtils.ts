@@ -40,6 +40,24 @@ export const GasMultipliers = {
   [chains.zksync]: 20,
 }
 
+// Filecoin FEVM's eth_estimateGas returns "missing revert data" for complex contract
+// calls (e.g., nested Safes) even when the transaction would succeed. Use a conservative
+// fallback rather than surfacing a false "will likely fail" error to the user.
+const FILECOIN_GAS_FALLBACK = BigInt(10_000_000)
+
+export const getGasLimitForFilecoin = async (
+  web3: JsonRpcProvider,
+  to: string,
+  from: string,
+  data: string | undefined,
+): Promise<bigint> => {
+  try {
+    return await web3.estimateGas({ to, from, data })
+  } catch {
+    return FILECOIN_GAS_FALLBACK
+  }
+}
+
 export const incrementByGasMultiplier = (value: bigint, multiplier: number) => {
   return (value * BigInt(100 * multiplier)) / BigInt(100)
 }

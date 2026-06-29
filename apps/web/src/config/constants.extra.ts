@@ -17,6 +17,8 @@ export const LIFI_WIDGET_URL = process.env.NEXT_PUBLIC_LIFI_WIDGET_URL || 'https
 export const OZ_SAFE_UTILS_URL = 'https://safeutils.openzeppelin.com'
 export const PROTOFIRE_SAFE_UTILS_URL = 'https://safeutils.protofire.io'
 
+export const FILECOIN_CHAIN_IDS = ["314", "314159"]
+
 // Sunset banners per chain ID
 const CROSSFI_SUNSET_BANNER = {
   title: 'CrossFi Safe Support Sunsetting',

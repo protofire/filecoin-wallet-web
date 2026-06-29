@@ -14,7 +14,9 @@ import {
   GasMultipliers,
   incrementByGasMultiplier,
   getGasLimitForZkSync as getGasLimitForZkSyncUtil,
+  getGasLimitForFilecoin as getGasLimitForFilecoinUtil
 } from '@safe-global/utils/hooks/coreSDK/gasLimitUtils'
+import { FILECOIN_CHAIN_IDS } from '@/config/constants.extra'
 
 const useGasLimit = (
   safeTx?: SafeTransaction,
@@ -51,6 +53,12 @@ const useGasLimit = (
       (await web3ReadOnly.getCode(walletAddress)) !== '0x'
     ) {
       return getGasLimitForZkSyncUtil(web3ReadOnly, safeSDK, safeTx, safe.chainId, safe.address.value)
+    }
+
+    // Filecoin FEVM's eth_estimateGas returns "missing revert data" for nested Safe
+    // transactions even when they would succeed. Use a fallback-aware estimator.
+    if (FILECOIN_CHAIN_IDS.includes(safe.chainId)) {
+      return getGasLimitForFilecoinUtil(web3ReadOnly, safeAddress, walletAddress, encodedSafeTx)
     }
 
     return web3ReadOnly
