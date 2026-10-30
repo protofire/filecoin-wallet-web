@@ -1,7 +1,7 @@
 import React from 'react'
-import { Typography } from '@mui/material'
 import css from './styles.module.css'
 import WelcomeLogin from './WelcomeLogin'
+import WelcomeRightPanel from './WelcomeRightPanel'
 import SafeLogo from '@/public/images/logo.svg'
 import footerCss from './welcomeFooter.module.css'
 import Footer from '../common/Footer'
@@ -41,17 +41,11 @@ const NewSafe = () => {
           background: TEMPLATE_CONFIG.WELCOME_PALETTE
             ? `linear-gradient(-90deg, ${TEMPLATE_CONFIG.WELCOME_PALETTE})`
             : TEMPLATE_CONFIG.IS_LICENSED
-              ? 'linear-gradient(-90deg, #10b8ff, #b2efff)'
-              : undefined,
+            ? 'linear-gradient(-90deg, #10b8ff, #b2efff)'
+            : undefined,
         }}
       >
-        <div className={css.rightContent}>
-          <Typography className={css.label}>FOR ORGANIZATIONS AND POWER USERS</Typography>
-          <Typography className={css.mainTitle}>Own your assets onchain securely</Typography>
-        </div>
-        <div className={css.mockupImageContainer}>
-          <img src="/images/welcome/safe-mockup.png" alt="Safe interface mockup" className={css.mockupImage} />
-        </div>
+        <WelcomeRightPanel />
       </div>
     </div>
   )
